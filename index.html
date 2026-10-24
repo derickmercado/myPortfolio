@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Derick Myles M. Mercado — Web &amp; Systems Developer</title>
-<meta name="description" content="Web developer in Baguio City who has built payroll, attendance and restaurant management systems for local businesses.">
+<meta name="description" content="Web developer in Baguio City building full-stack business systems: payroll, property billing, event ticketing and restaurant management.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -57,8 +57,8 @@
         </h1>
 
         <p class="hero__sub reveal" data-d="3">
-          I'm a TESDA NC III-certified web developer based in Baguio City. I've built the payroll,
-          attendance and restaurant systems local businesses run on.
+          I'm a TESDA NC III-certified web developer based in Baguio City. I build full-stack
+          business systems for clients, from payroll and property billing to event ticketing.
         </p>
 
         <div class="hero__actions reveal" data-d="4">
@@ -93,8 +93,8 @@
           <h3 class="entry__title">Junior Developer</h3>
           <p class="entry__org">Disenyo Digitals Collective &nbsp;·&nbsp; Nevada Square, Baguio City</p>
           <ul class="entry__notes">
-            <li>Turned client requirements into clear prompts, then reviewed, tested and corrected the generated code before hand-off.</li>
-            <li>Shipped features with the development team on two live client systems.</li>
+            <li>Turn client requirements into Claude / Claude Code prompts, then review, test and fix the generated code.</li>
+            <li>Ship features with the development team on live client systems.</li>
           </ul>
         </div>
         <p class="entry__date">Sep 2026 — Present</p>
@@ -105,8 +105,7 @@
           <h3 class="entry__title">IT / Developer Intern <span class="entry__badge">Team Lead</span></h3>
           <p class="entry__org">Disenyo Digitals Collective &nbsp;·&nbsp; Nevada Square, Baguio City</p>
           <ul class="entry__notes">
-            <li>Served as Team Lead of the intern team.</li>
-            <li>Promoted to Junior Developer after the internship, continuing on the same client systems.</li>
+            <li>Led the intern team; promoted to Junior Developer after the internship.</li>
           </ul>
         </div>
         <p class="entry__date">Jun 20 — Aug 10, 2026</p>
@@ -131,7 +130,7 @@
             <li>Ran customer sales and stock monitoring — the same counting and reconciling the systems I now build automate.</li>
           </ul>
         </div>
-        <p class="entry__date">Jan 22 — Sep 2022</p>
+        <p class="entry__date">Jan — Sep 2022</p>
       </li>
     </ol>
   </section>
@@ -140,10 +139,52 @@
   <section class="sec" id="systems">
     <header class="sec__head reveal">
       <p class="sec__kicker">Projects</p>
-      <h2>Systems in <em>production</em></h2>
+      <h2>Systems I've <em>built</em></h2>
     </header>
 
     <div class="projects">
+
+      <article class="proj reveal">
+        <header class="proj__head">
+          <h3>KPI Owner Billing</h3>
+          <p class="proj__sub">Billing &amp; performance platform for property owners</p>
+        </header>
+        <p class="proj__client">Kay Properties International · Oct 2026</p>
+        <ul class="proj__work">
+          <li><b>Main contributor</b> (121 of 223 commits) to a full-stack app for owner billing, statements, reports and unit operations.</li>
+          <li><b>REST API on PostgreSQL</b> with row-level security.</li>
+          <li>React screens backed by <b>139 test files</b>; deployed on Vercel + Railway.</li>
+        </ul>
+        <ul class="stack"><li>TypeScript</li><li>React</li><li>Node.js</li><li>PostgreSQL</li></ul>
+      </article>
+
+      <article class="proj reveal">
+        <header class="proj__head">
+          <h3>AYA Events Hub</h3>
+          <p class="proj__sub">Event ticketing platform</p>
+        </header>
+        <p class="proj__client">As You Are Baguio · Jun 2026</p>
+        <ul class="proj__work">
+          <li><b>Event pages and ticket tiers</b>, registration with promo codes, and an admin dashboard with payment tracking.</li>
+          <li><b>QR tickets and check-in</b>, plus a community CRM with CSV export.</li>
+          <li>Resend emails with <b>abandoned-cart reminders</b>.</li>
+        </ul>
+        <ul class="stack"><li>Next.js</li><li>TypeScript</li><li>Supabase</li></ul>
+      </article>
+
+      <article class="proj reveal">
+        <header class="proj__head">
+          <h3>UC Nexus</h3>
+          <p class="proj__sub">AI-assisted class scheduling · Capstone</p>
+        </header>
+        <p class="proj__client">University of the Cordilleras · May 2026</p>
+        <ul class="proj__work">
+          <li><b>Web admin system and mobile app</b> for class schedules and rooms.</li>
+          <li>An <b>AI assistant</b> and conflict checking for schedules.</li>
+          <li>Rated <b>“Highly Usable”</b> (USE score 4.265 / 5) by 110 students and administrators.</li>
+        </ul>
+        <ul class="stack"><li>PHP</li><li>MySQL</li><li>React Native</li><li>Gemini API</li></ul>
+      </article>
 
       <article class="proj reveal">
         <header class="proj__head">
@@ -194,137 +235,6 @@
       </article>
 
     </div>
-
-    <!-- Live demo: the 13th month pay module -->
-    <div class="demo">
-      <div class="demo__text reveal">
-        <p class="sec__kicker">Try it</p>
-        <h3 class="demo__title">A module I built, <em>running live</em></h3>
-        <p class="demo__body">
-          This is the 13th month pay calculation from Ongkoleyt. Each month's included
-          earnings are built up from days worked, half days, overtime and other
-          included pay, then the January–December total is divided by twelve.
-          Open the sample and change the inputs to see it recompute.
-        </p>
-        <ul class="formula">
-          <li><b>13th month</b> = Total included earnings (Jan–Dec) ÷ 12</li>
-          <li><b>Month total</b> = Basic + OT + Other included</li>
-          <li><b>Basic</b> = (Days × Daily rate) + (Half days × 0.5 × Daily rate)</li>
-          <li><b>OT</b> = OT hours × Hourly rate × OT multiplier</li>
-        </ul>
-      </div>
-
-      <div class="ask reveal">
-        <div class="ask__icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="4" y="3" width="16" height="18" rx="3"/>
-            <path d="M8 7h8M8 11h2M12 11h2M16 11h0M8 15h2M12 15h2M8 18h8"/>
-          </svg>
-        </div>
-        <p class="ask__q">Want to see a sample payroll?</p>
-        <p class="ask__sub" id="ask-sub">Run the 13th month pay module with your own numbers. It takes about ten seconds.</p>
-        <div class="ask__actions">
-          <button type="button" class="btn btn--dark" id="ask-yes">Yes, show me</button>
-          <button type="button" class="btn btn--light" id="ask-no">Maybe later</button>
-        </div>
-      </div>
-
-      <dialog class="modal" id="ledger-modal" aria-labelledby="ledger-title">
-      <aside class="ledger">
-        <div class="ledger__head">
-          <div>
-            <p class="ledger__kicker">Ongkoleyt &nbsp;·&nbsp; Payroll</p>
-            <h2 class="ledger__title" id="ledger-title">13th Month Pay</h2>
-          </div>
-          <div class="ledger__tools">
-            <p class="ledger__law">PD&nbsp;851</p>
-            <button type="button" class="modal__close" id="ledger-close" aria-label="Close sample payroll">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="ledger__controls">
-          <label class="ctl">
-            <span class="ctl__label">Daily basic rate</span>
-            <span class="ctl__val" id="out-rate">₱600</span>
-            <input type="range" id="in-rate" min="400" max="2000" step="10" value="600"
-                   aria-label="Daily basic rate in pesos">
-          </label>
-          <label class="ctl">
-            <span class="ctl__label">Days worked / month</span>
-            <span class="ctl__val" id="out-days">22</span>
-            <input type="range" id="in-days" min="0" max="26" step="1" value="22"
-                   aria-label="Full days worked per month">
-          </label>
-          <label class="ctl">
-            <span class="ctl__label">Half days / month</span>
-            <span class="ctl__val" id="out-half">1</span>
-            <input type="range" id="in-half" min="0" max="10" step="1" value="1"
-                   aria-label="Half days worked per month">
-          </label>
-          <label class="ctl">
-            <span class="ctl__label">OT hours / month</span>
-            <span class="ctl__val" id="out-ot">8</span>
-            <input type="range" id="in-ot" min="0" max="60" step="1" value="8"
-                   aria-label="Overtime hours per month">
-          </label>
-          <label class="ctl">
-            <span class="ctl__label">Other included / month</span>
-            <span class="ctl__val" id="out-other">₱0</span>
-            <input type="range" id="in-other" min="0" max="5000" step="100" value="0"
-                   aria-label="Other included earnings per month in pesos">
-          </label>
-          <label class="ctl">
-            <span class="ctl__label">Months worked</span>
-            <span class="ctl__val" id="out-months">12</span>
-            <input type="range" id="in-months" min="1" max="12" step="1" value="12"
-                   aria-label="Months worked this calendar year">
-          </label>
-          <label class="ctl ctl--num">
-            <span class="ctl__label">OT multiplier</span>
-            <input type="number" id="in-mult" min="1" max="3" step="0.05" value="1.25"
-                   aria-label="Overtime multiplier">
-          </label>
-          <p class="ctl ctl--num">
-            <span class="ctl__label">Hourly rate <small>(daily ÷ 8)</small></span>
-            <span class="ctl__val" id="out-hourly">₱75.00</span>
-          </p>
-        </div>
-
-        <table class="sheet">
-          <caption class="sr-only">Basic, overtime, other included earnings and month total for each month of the calendar year</caption>
-          <thead>
-            <tr>
-              <th scope="col">Month</th><th scope="col">Basic</th><th scope="col">OT</th>
-              <th scope="col" class="c-other-h">Other</th><th scope="col">Month total</th>
-            </tr>
-          </thead>
-          <tbody id="sheet-body"><!-- rows injected --></tbody>
-        </table>
-
-        <div class="ledger__foot">
-          <div class="calc">
-            <span class="calc__op">Total included earnings</span>
-            <span class="calc__line" aria-hidden="true"></span>
-            <span class="calc__sum" id="out-year">₱0</span>
-          </div>
-          <div class="calc">
-            <span class="calc__op">÷ 12</span>
-            <span class="calc__line" aria-hidden="true"></span>
-          </div>
-          <div class="result">
-            <p class="result__left">
-              <span class="result__label">13th month pay</span>
-              <span class="stamp" id="stamp">Computed &amp; checked</span>
-            </p>
-            <output class="result__val" id="out-total"
-                    for="in-rate in-days in-half in-ot in-mult in-other in-months">₱0</output>
-          </div>
-        </div>
-      </aside>
-      </dialog>
-    </div>
   </section>
 
   <!-- ─────────────── SKILLS ─────────────── -->
@@ -336,27 +246,26 @@
 
     <dl class="skills">
       <div class="skills__row reveal">
-        <dt>Web</dt>
-        <dd><span>HTML</span><span>CSS</span><span>JavaScript</span><span>Responsive design</span><span class="is-proj">React</span></dd>
+        <dt>Front end</dt>
+        <dd><span>HTML</span><span>CSS</span><span>JavaScript</span><span>TypeScript</span><span>React</span><span>Next.js</span><span>React Native</span><span>Tailwind CSS</span></dd>
       </div>
       <div class="skills__row reveal">
-        <dt>Backend &amp; data</dt>
-        <dd><span>MySQL relational design</span><span class="is-proj">Laravel</span><span>Supabase</span><span>Railway</span></dd>
+        <dt>Back end &amp; data</dt>
+        <dd><span>Node.js (Fastify)</span><span>PHP</span><span>Laravel</span><span>REST APIs</span><span>PostgreSQL</span><span>MySQL</span><span>Supabase</span></dd>
+      </div>
+      <div class="skills__row reveal">
+        <dt>Testing &amp; deploy</dt>
+        <dd><span>Vitest</span><span>Testing Library</span><span>Git</span><span>Vercel</span><span>Railway</span></dd>
       </div>
       <div class="skills__row reveal">
         <dt>AI tools</dt>
-        <dd><span>Claude</span><span>Claude Code</span><span>Prompting from requirements</span><span>Reviewing generated code</span></dd>
+        <dd><span>Claude</span><span>Claude Code</span></dd>
       </div>
       <div class="skills__row reveal">
-        <dt>Tools</dt>
-        <dd><span>Git</span><span>Figma</span> <span>Vercel</span></dd>
-      </div>
-      <div class="skills__row reveal">
-        <dt>Working with people</dt>
-        <dd><span>Team leadership</span><span>Clear communication</span><span>Teamwork</span><span>Steady under pressure</span></dd>
+        <dt>Soft skills</dt>
+        <dd><span>Team leadership</span><span>Communication</span><span>Teamwork</span><span>Steady under pressure</span></dd>
       </div>
     </dl>
-    <p class="skills__key reveal"><i aria-hidden="true"></i> Purple items are from shipped project work, not coursework.</p>
   </section>
 
   <!-- ─────────────── RECORD ─────────────── -->

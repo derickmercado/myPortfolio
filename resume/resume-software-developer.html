@@ -3,216 +3,210 @@
 <head>
 <meta charset="utf-8">
 <title>Derick Myles M. Mercado — Software Developer Resume</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   @page { size: A4; margin: 0; }
   * { box-sizing: border-box; }
   html, body { margin: 0; }
   body {
-    font-family: Arial, Helvetica, sans-serif;
-    color: #000; background: #fff;
-    font-size: 8.4pt; line-height: 1.28;
+    font-family: 'Source Sans 3', Arial, sans-serif;
+    color: #222; background: #fff;
+    font-size: 8.5pt; line-height: 1.3;
   }
-  .page { width: 210mm; min-height: 297mm; padding: 9mm 13mm 6mm; }
-  p, ul, h1, h2 { margin: 0; }
+  .page { width: 210mm; min-height: 297mm; padding: 10mm 13mm 7mm; display: flex; flex-direction: column; }
+  p, ul, h1, h2, h3 { margin: 0; }
   ul { padding: 0; list-style: none; }
 
   /* header */
-  .head { text-align: center; }
-  .name { font-size: 18pt; font-weight: 700; letter-spacing: .04em; }
-  .role { font-size: 10pt; margin-top: .8mm; }
-  .contact { margin-top: 1mm; font-size: 8.6pt; }
-
-  /* sections */
-  .sec { margin-top: 2.5mm; }
-  .sec > h2 {
-    font-size: 9.6pt; font-weight: 700; letter-spacing: .08em;
-    border-bottom: 1px solid #000; padding-bottom: .6mm; margin-bottom: 1.2mm;
+  .head { display: flex; justify-content: space-between; align-items: center; padding-bottom: 4.5mm; border-bottom: .6px solid #cfcfcf; }
+  .label { font-size: 9pt; letter-spacing: .28em; color: #555; text-transform: uppercase; }
+  .name {
+    font-family: 'Playfair Display', Georgia, serif; font-weight: 600;
+    font-size: 29pt; line-height: 1.02; letter-spacing: .05em; color: #2b2b2b; margin-top: 1.5mm;
   }
+  .photo { width: 29mm; height: 29mm; border-radius: 50%; object-fit: cover; flex: none; }
 
-  /* entries */
-  .item + .item { margin-top: 1.4mm; }
-  .item__top { display: flex; justify-content: space-between; gap: 4mm; align-items: baseline; }
-  .item__title { font-weight: 700; }
-  .item__date { white-space: nowrap; }
-  .item__org { font-style: italic; }
-  .item ul { margin-top: .4mm; }
-  .item li { position: relative; padding-left: 3.5mm; }
-  .item li::before { content: '•'; position: absolute; left: .4mm; }
-  .company__name { font-weight: 700; }
-  .company .role-item { margin-top: 1.2mm; }
+  /* body columns */
+  .cols { display: grid; grid-template-columns: 58mm 1fr; flex: 1; }
+  .side { padding: 4mm 6mm 0 0; border-right: .6px solid #cfcfcf; }
+  .main { padding: 4mm 0 0 7mm; display: flex; flex-direction: column; }
 
-  /* one-line rows */
-  .rows li { display: flex; justify-content: space-between; gap: 4mm; align-items: baseline; }
-  .rows li + li { margin-top: .5mm; }
+  h2 {
+    font-size: 9.5pt; font-weight: 400; letter-spacing: .24em; color: #333; text-transform: uppercase;
+    margin-bottom: 2mm;
+  }
+  .block + .block { margin-top: 3mm; padding-top: 3mm; border-top: .6px solid #e0e0e0; }
 
-  /* skills */
-  .skills { display: grid; grid-template-columns: 28mm 1fr; gap: .3mm 3mm; margin: 0; }
-  .skills dt { font-weight: 700; }
-  .skills dd { margin: 0; }
+  /* sidebar */
+  .contact li { display: flex; align-items: center; gap: 2.2mm; margin-bottom: 1.6mm; color: #333; }
+  .contact svg { width: 3.4mm; height: 3.4mm; flex: none; color: #555; }
+  .skill-group + .skill-group { margin-top: 1.8mm; }
+  .skill-group b { display: block; font-weight: 600; color: #333; font-size: 8.2pt; letter-spacing: .04em; }
+  .skill-group p { color: #555; }
+  .list li { position: relative; padding-left: 3.2mm; color: #444; }
+  .list li + li { margin-top: 1.4mm; }
+  .list li::before { content: ''; position: absolute; left: 0; top: .55em; width: 1.1mm; height: 1.1mm; border-radius: 50%; background: #777; }
+  .list small { display: block; color: #777; font-size: 7.8pt; }
 
-  .foot { margin-top: 2.4mm; text-align: center; font-style: italic; }
+  /* main */
+  .summary { color: #555; }
+  .job + .job { margin-top: 2.3mm; }
+  .job h3 { font-size: 8.4pt; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #222; }
+  .job .meta { margin-top: .5mm; color: #666; }
+  .job .meta b { color: #222; font-weight: 600; }
+  .job ul { margin-top: 1mm; }
+  .job li { position: relative; padding-left: 3.2mm; color: #666; }
+  .job li + li { margin-top: .5mm; }
+  .job li::before { content: ''; position: absolute; left: 0; top: .55em; width: 1.1mm; height: 1.1mm; border-radius: 50%; background: #999; }
+  .foot { margin-top: auto; padding-top: 2mm; color: #888; font-size: 7.8pt; text-align: right; font-style: italic; }
 </style>
 </head>
 <body>
 <div class="page">
 
   <header class="head">
-    <h1 class="name">DERICK MYLES M. MERCADO</h1>
-    <p class="role">Software Developer &nbsp;|&nbsp; TypeScript · React · Node.js · PHP · SQL &nbsp;|&nbsp; Remote-ready</p>
-    <p class="contact">derick.mercado2124@gmail.com &nbsp;|&nbsp; +63 915 612 0894 &nbsp;|&nbsp; Baguio City, Philippines</p>
+    <div>
+      <p class="label">Software Developer</p>
+      <h1 class="name">DERICK MYLES<br>M. MERCADO</h1>
+    </div>
+    <img class="photo" src="../assets/profile-800.jpg" alt="">
   </header>
 
-  <section class="sec">
-    <h2>PROFESSIONAL SUMMARY</h2>
-    <p>
-      Software developer (TESDA NC III, Web Development; BS Information Technology, Class of 2026) who builds and maintains full-stack
-      web applications for real clients — payroll, property billing, event ticketing and an AI-assisted scheduling system. I build features,
-      fix bugs, test my own work and communicate progress clearly in English, and I'm comfortable working remotely.
-    </p>
-  </section>
+  <div class="cols">
+    <aside class="side">
 
-  <section class="sec">
-    <h2>TECHNICAL SKILLS</h2>
-    <dl class="skills">
-      <dt>Languages</dt><dd>TypeScript, JavaScript, PHP, SQL, HTML / CSS</dd>
-      <dt>Frameworks</dt><dd>React, Next.js, React Native, Node.js (Fastify), Laravel, Tailwind CSS</dd>
-      <dt>Data &amp; APIs</dt><dd>REST APIs, PostgreSQL (incl. row-level security), MySQL, Supabase, third-party APIs (Resend, Gemini)</dd>
-      <dt>Testing &amp; cloud</dt><dd>Vitest, Testing Library, Git, Vercel and Railway deployment; Claude Code</dd>
-      <dt>Ways of working</dt><dd>Code review, bug fixing, remote collaboration, online meetings, clear written English</dd>
-    </dl>
-  </section>
-
-  <section class="sec">
-    <h2>WORK EXPERIENCE</h2>
-
-    <div class="item company">
-      <p class="company__name">Disenyo Digitals Collective, Baguio City</p>
-      <div class="role-item">
-        <div class="item__top">
-          <p class="item__title">Junior Developer</p>
-          <p class="item__date">Sep 2026 – Present</p>
-        </div>
-        <ul>
-          <li>Build new features and maintain existing client systems with the development team (see Projects).</li>
-          <li>Fix bugs, test and review code before hand-off, and report progress to the team and clients.</li>
+      <section class="block">
+        <h2>Contact</h2>
+        <ul class="contact">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 6l-10 7L2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>derick.mercado2124@gmail.com</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg>+63 915 612 0894</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Baguio City, Philippines</li>
         </ul>
-      </div>
-      <div class="role-item">
-        <div class="item__top">
-          <p class="item__title">IT / Developer Intern (Team Lead)</p>
-          <p class="item__date">Jun 20 – Aug 10, 2026</p>
-        </div>
-        <ul>
-          <li>Led the intern team; promoted to Junior Developer after the internship.</li>
+      </section>
+
+      <section class="block">
+        <h2>Skills</h2>
+        <div class="skill-group"><b>Languages</b><p>TypeScript, JavaScript, PHP, SQL, HTML / CSS</p></div>
+        <div class="skill-group"><b>Frameworks</b><p>React, Next.js, React Native, Node.js (Fastify), Laravel, Tailwind CSS</p></div><div class="skill-group"><b>Data &amp; APIs</b><p>REST APIs, PostgreSQL, MySQL, Supabase, Resend, Gemini API</p></div>
+        <div class="skill-group"><b>Testing &amp; cloud</b><p>Vitest, Testing Library, Git, Vercel, Railway</p></div>
+        <div class="skill-group"><b>AI tools</b><p>Claude, Claude Code</p></div>
+        <div class="skill-group"><b>Ways of working</b><p>Code review, bug fixing, remote collaboration, online meetings, team leadership</p></div>
+      </section>
+
+      <section class="block">
+        <h2>Education</h2>
+        <ul class="list">
+          <li>BS Information Technology<small>University of the Cordilleras · 2026</small></li>
+          <li>Senior High, Mobile App &amp; Web Dev.<small>STI College Baguio · 2023</small></li>
         </ul>
-      </div>
-    </div>
+      </section>
 
-    <div class="item">
-      <div class="item__top">
-        <p class="item__title">Freelance Web Project Developer</p>
-        <p class="item__date">2022 – 2026</p>
-      </div>
-      <p>Responsive web pages and small database-driven projects in HTML, CSS, JavaScript and MySQL.</p>
-    </div>
+      <section class="block">
+        <h2>Certifications</h2>
+        <ul class="list">
+          <li>TESDA NC III — Web Development<small>Valid Aug 2026 – Aug 2031</small></li>
+          <li>AI for Digital Novices (16 hrs)<small>DICT CAR · Jun 2026</small></li>
+          <li>Cisco Networking Academy<small>NetAcad · Aug 2025</small></li>
+        </ul>
+      </section>
 
-    <div class="item">
-      <div class="item__top">
-        <p class="item__title">Sales and Inventory Associate</p>
-        <p class="item__date">Jan – Sep 2022</p>
-      </div>
-      <p class="item__org">Sneaks &amp; Laces, Baguio City</p>
-    </div>
-  </section>
+      <section class="block">
+        <h2>Awards</h2>
+        <ul class="list">
+          <li>Best in Console Application<small>STI College graduation · 2023</small></li>
+          <li>Champion, Tagisan ng Talino<small>CodeWest, STI Baguio · Grade 12</small></li>
+        </ul>
+      </section>
 
-  <section class="sec">
-    <h2>PROJECTS</h2>
+      <section class="block">
+        <h2>Languages</h2>
+        <ul class="list">
+          <li>English | Intermediate</li>
+          <li>Filipino | Native</li>
+        </ul>
+      </section>
 
-    <div class="item">
-      <div class="item__top">
-        <p class="item__title">KPI Owner Billing &amp; Performance Platform</p>
-        <p class="item__date">Oct 2026</p>
-      </div>
-      <p class="item__org">Kay Properties International (property management) · TypeScript, React, Node.js, PostgreSQL</p>
-      <ul>
-        <li>Main contributor (121 of 223 commits) to a full-stack app for owner billing, statements, reports and unit operations.</li>
-        <li>Built REST API endpoints on PostgreSQL with row-level security; React screens backed by 139 test files; deployed on Vercel + Railway.</li>
-      </ul>
-    </div>
+    </aside>
 
-    <div class="item">
-      <div class="item__top">
-        <p class="item__title">AYA Events Hub — Event Management &amp; Ticketing Platform</p>
-        <p class="item__date">Jun 2026</p>
-      </div>
-      <p class="item__org">As You Are Baguio community · Next.js, TypeScript, Supabase, Tailwind CSS</p>
-      <ul>
-        <li>Built event pages, ticket tiers, registration with promo codes, and an admin dashboard with payment status tracking.</li>
-        <li>Added QR tickets and check-in, a community CRM with CSV export, and Resend emails with abandoned-cart reminders.</li>
-      </ul>
-    </div>
+    <main class="main">
 
-    <div class="item">
-      <div class="item__top">
-        <p class="item__title">UC Nexus — AI-Assisted Classroom Scheduling (Capstone)</p>
-        <p class="item__date">May 2026</p>
-      </div>
-      <p class="item__org">University of the Cordilleras, team of 3 · PHP, MySQL, React Native, Supabase, Gemini API</p>
-      <ul>
-        <li>Web admin system and mobile app for schedules and room management: AI assistant, conflict checking, CSV import/export.</li>
-        <li>Rated “Highly Usable” (USE score 4.265 / 5) in usability testing with 110 students and administrators.</li>
-      </ul>
-    </div>
+      <section class="block">
+        <h2>Summary</h2>
+        <p class="summary">
+          Software developer (TESDA NC III, Web Development; BS Information Technology, 2026) who builds and maintains full-stack
+          web applications for real clients — payroll, property billing, event ticketing and AI-assisted scheduling. I build features,
+          fix bugs, test my own work and keep the team updated on progress, and I'm comfortable working remotely.
+        </p>
+      </section>
 
-    <div class="item">
-      <div class="item__top">
-        <p class="item__title">Ongkoleyt — Multi-Branch HR &amp; Payroll System</p>
-        <p class="item__date">2026</p>
-      </div>
-      <p class="item__org">Disenyo client · React, Laravel, MySQL</p>
-      <ul>
-        <li>Built the 13th Month Pay module (PD 851 / DOLE rules); worked on Attendance and the Payroll Ledger.</li>
-      </ul>
-    </div>
+      <section class="block">
+        <h2>Work Experience</h2>
+        <div class="job">
+          <h3>Junior Developer</h3>
+          <p class="meta"><b>Disenyo Digitals Collective</b> . Baguio City | Sep 2026 – Present</p>
+          <ul>
+            <li>Build new features and maintain existing client systems with the development team (see Projects).</li>
+            <li>Fix bugs, test and review code before hand-off, and report progress to the team and clients.</li>
+          </ul>
+        </div>
+        <div class="job">
+          <h3>IT / Developer Intern — Team Lead</h3>
+          <p class="meta"><b>Disenyo Digitals Collective</b> . Baguio City | Jun 20 – Aug 10, 2026</p>
+          <ul><li>Led the intern team; promoted to Junior Developer after the internship.</li></ul>
+        </div>
+        <div class="job">
+          <h3>Freelance Web Project Developer</h3>
+          <p class="meta"><b>Independent</b> | 2022 – 2026</p>
+          <ul><li>Responsive web pages and small database-driven projects in HTML, CSS, JavaScript and MySQL.</li></ul>
+        </div>
+        <div class="job">
+          <h3>Sales and Inventory Associate</h3>
+          <p class="meta"><b>Sneaks &amp; Laces</b> . Baguio City | Jan – Sep 2022</p>
+        </div>
+      </section>
 
-    <div class="item">
-      <div class="item__top">
-        <p class="item__title">KusinaIQ — Restaurant Management System</p>
-        <p class="item__date">2026</p>
-      </div>
-      <p class="item__org">Chimichanga by Jaime's, Baguio City</p>
-      <ul>
-        <li>Built yield-discrepancy tracking with an owner approval step; fixed the Profit &amp; Loss dashboard math.</li>
-      </ul>
-    </div>
-  </section>
+      <section class="block">
+        <h2>Projects</h2>
+        <div class="job">
+          <h3>KPI Owner Billing &amp; Performance Platform</h3>
+          <p class="meta"><b>Kay Properties International</b> | Oct 2026 | TypeScript, React, Node.js, PostgreSQL</p>
+          <ul>
+            <li>Main contributor (121 of 223 commits) to a full-stack app for owner billing, statements, reports and unit operations.</li>
+            <li>REST API on PostgreSQL with row-level security; React screens backed by 139 test files; deployed on Vercel + Railway.</li>
+          </ul>
+        </div>
+        <div class="job">
+          <h3>AYA Events Hub — Event Ticketing Platform</h3>
+          <p class="meta"><b>As You Are Baguio</b> | Jun 2026 | Next.js, TypeScript, Supabase</p>
+          <ul>
+            <li>Event pages, ticket tiers, registration with promo codes, and an admin dashboard with payment tracking.</li>
+            <li>QR tickets and check-in, a community CRM with CSV export, and Resend emails with abandoned-cart reminders.</li>
+          </ul>
+        </div>
+        <div class="job">
+          <h3>UC Nexus — AI-Assisted Scheduling (Capstone)</h3>
+          <p class="meta"><b>University of the Cordilleras</b> | May 2026 | PHP, MySQL, React Native, Gemini API</p>
+          <ul>
+            <li>Web admin system and mobile app for class schedules and rooms, with an AI assistant and conflict checking.</li>
+            <li>Rated “Highly Usable” (USE score 4.265 / 5) by 110 students and administrators.</li>
+          </ul>
+        </div>
+        <div class="job">
+          <h3>Ongkoleyt — HR &amp; Payroll System</h3>
+          <p class="meta"><b>Disenyo client</b> | 2026 | React, Laravel, MySQL</p>
+          <ul><li>Built the 13th Month Pay module (PD 851 / DOLE rules); worked on Attendance and the Payroll Ledger.</li></ul>
+        </div>
+        <div class="job">
+          <h3>KusinaIQ — Restaurant Management System</h3>
+          <p class="meta"><b>Chimichanga by Jaime's</b> | 2026</p>
+          <ul><li>Built yield-discrepancy tracking with an owner approval step; fixed the Profit &amp; Loss dashboard math.</li></ul>
+        </div>
+      </section>
 
-  <section class="sec">
-    <h2>EDUCATION</h2>
-    <ul class="rows">
-      <li><span><b>BS Information Technology</b>, University of the Cordilleras, Baguio City</span><span>Class of 2026</span></li>
-      <li><span><b>Senior High School, Mobile App &amp; Web Development</b>, STI College, Baguio City</span><span>2023</span></li>
-    </ul>
-  </section>
-
-  <section class="sec">
-    <h2>CERTIFICATION &amp; TRAINING</h2>
-    <ul class="rows">
-      <li><span><b>National Certificate III — Web Development</b>, TESDA</span><span>Valid Aug 2026 – Aug 2031</span></li>
-      <li><span><b>AI for Digital Novices (MSMEs)</b>, 16 hrs, DICT CAR</span><span>Jun 29–30, 2026</span></li>
-      <li><span><b>Cisco Networking Academy</b>, NetAcad</span><span>Aug 5, 2025</span></li>
-    </ul>
-  </section>
-
-  <section class="sec">
-    <h2>AWARDS</h2>
-    <ul class="rows">
-      <li><span><b>Best in Console Application</b>, Senior High graduation award, STI College</span><span>2023</span></li>
-      <li><span><b>Champion, Tagisan ng Talino</b>, CodeWest Programming Competition, STI Baguio</span><span>Grade 12</span></li>
-    </ul>
-  </section>
-
-  <p class="foot">Character references available upon request.</p>
+      <p class="foot">Character references available upon request.</p>
+    </main>
+  </div>
 
 </div>
 </body>
