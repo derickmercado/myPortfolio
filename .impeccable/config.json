@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "low-contrast",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-10-24T19:31:20.430Z",
+        "reason": "assistant triage: flagged #B99BFF gradient is a 2px hover underline on .contact__list a; link text is #fff on the #1F1F24 contact card (~16:1)"
+      }
+    ]
+  }
+}

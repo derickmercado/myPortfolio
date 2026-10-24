@@ -517,15 +517,12 @@
   }
 
   /* Frame budget: 30fps normally, 15fps while the page is being scrolled
-     (so scrolling gets the CPU), and nothing at all while the payroll
-     pop-up covers the page or the tab is hidden. */
+     (so scrolling gets the CPU), and nothing at all while the tab is hidden. */
   var t0 = performance.now(), lastDraw = 0, lastScroll = 0;
-  var root = document.documentElement;
   window.addEventListener('scroll', function () { lastScroll = performance.now(); }, { passive: true });
 
   function loop(now) {
     requestAnimationFrame(loop);        // browsers stop rAF while the tab is hidden
-    if (root.classList.contains('modal-open')) return;
     var gap = now - lastScroll < 200 ? 66 : 33;
     if (now - lastDraw < gap) return;
     lastDraw = now;
