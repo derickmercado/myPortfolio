@@ -9,11 +9,6 @@
   var hasIO = 'IntersectionObserver' in window;
   function qsa(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
 
-  /* ── section headings: wrap so the text can rise out of a mask ── */
-  qsa('.sec__head h2').forEach(function (h) {
-    h.innerHTML = '<span class="mask"><span>' + h.innerHTML + '</span></span>';
-  });
-
   /* ── stagger siblings so lists cascade in ───────────── */
   ['.entries', '.projects', '.skills'].forEach(function (sel) {
     qsa(sel).forEach(function (list) {
@@ -257,9 +252,10 @@
 
   var LOOP = 13;          // seconds per cycle
   var WORD = 'derick';    // written vertically in the final square
+  // greens only, to match the black-and-green theme (names kept from the old palette)
   var RGB = {
-    teal: '20,184,166', orange: '249,115,22', yellow: '234,179,8', green: '34,197,94',
-    blue: '59,130,246', red: '239,68,68', ink: '31,31,36', accent: '108,12,245'
+    teal: '34,229,122', orange: '124,255,178', yellow: '190,242,100', green: '19,138,76',
+    blue: '52,211,153', red: '34,229,122', ink: '233,245,236', accent: '34,229,122'
   };
 
   var W = 0, H = 0, U = 0, SX = 0;
@@ -491,17 +487,18 @@
     ctx.save();
     ctx.globalAlpha = fade;
     // soft drop shadow faked with two offset layers (no shadowBlur)
-    ctx.fillStyle = 'rgba(31,31,36,.05)';
+    ctx.fillStyle = 'rgba(0,0,0,.35)';
     rrect(cx - s / 2 - 6, cy - s / 2 + 14, s + 12, s + 8, s * .1); ctx.fill();
     rrect(cx - s / 2 - 2, cy - s / 2 + 8, s + 4, s + 2, s * .09); ctx.fill();
     rrect(cx - s / 2, cy - s / 2, s, s, s * .08);
-    ctx.fillStyle = '#EADFCB'; ctx.fill();
+    ctx.fillStyle = '#16241B'; ctx.fill();
+    ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(34,229,122,.6)'; ctx.stroke();
 
     var tA = seg(t, 10.3, 10.9);
     if (tA) {
       ctx.globalAlpha = fade * tA;
       ctx.translate(cx, cy); ctx.rotate(-Math.PI / 2);
-      ctx.fillStyle = '#1F1F24';
+      ctx.fillStyle = '#22E57A';
       ctx.font = '600 ' + Math.round(S * .2) + 'px Poppins, sans-serif';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText(WORD, 0, (1 - tA) * 8);

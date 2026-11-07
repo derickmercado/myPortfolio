@@ -80,7 +80,7 @@
     '  vec3 n  = rot(aNor, axis, ang);',
     '  vec4 vp = uView * uModel * vec4(p + lp, 1.0);',
     '  vDepth = -vp.z;',
-    '  vNor = mat3(uModel) * n;',
+    '  vNor = mat3(uView) * mat3(uModel) * n;',     // view space, so the rim light hugs silhouettes
     '  vCol = uPal[int(aSeed.z)];',
     '  gl_Position = uProj * vp;',
     '}'
@@ -94,9 +94,13 @@
     'out vec4 o;',
     'void main(){',
     '  vec3 n = normalize(vNor);',
-    '  float d = max(dot(n, normalize(vec3(0.45, 0.85, 0.5))), 0.0);',
+    '  float d = max(dot(n, normalize(vec3(0.35, 0.8, 0.55))), 0.0);',   // key light, top-right-front
     '  float h = 0.5 + 0.5 * n.y;',
-    '  vec3 c = vCol * (0.62 + 0.38 * d) + vec3(0.10) * h;',
+    '  float rim = pow(1.0 - abs(n.z), 2.2);',                         // faces turned away from camera
+    '  float glow = smoothstep(0.55, 0.9, max(vCol.g - vCol.r, 0.0));', // neon cubes self-light a little
+    '  vec3 c = vCol * (0.28 + 0.72 * d) + vec3(0.03, 0.06, 0.04) * h;',
+    '  c += vec3(0.13, 0.9, 0.48) * rim * 0.32;',                        // subtle green rim on the dark page
+    '  c += vCol * glow * 0.35;',
     '  float a = 1.0 - smoothstep(uFog.x, uFog.y, vDepth);',   // far cubes melt into the page
     '  o = vec4(c * a, a);',
     '}'
@@ -159,10 +163,11 @@
 
   var tex = gl.createTexture();
 
-  /* ── palette (matches styles.css: accent #6C0CF5) ─────── */
+  /* ── palette (matches styles.css: accent #22E57A) ─────── */
   function hex(h) { return [parseInt(h.slice(1, 3), 16) / 255, parseInt(h.slice(3, 5), 16) / 255, parseInt(h.slice(5, 7), 16) / 255]; }
-  var PAL = ['#B794FF', '#7C2BF7', '#DCCDFF', '#3A3A46', '#F97316', '#14B8A6'].map(hex);
-  var PAL_W = [.36, .27, .24, .07, .035, .025];
+  //            deep green  forest     graphite   near-black  neon       mint
+  var PAL = ['#138A4C', '#1D4D33', '#2C3530', '#101411', '#22E57A', '#7CFFB2'].map(hex);
+  var PAL_W = [.30, .26, .18, .14, .08, .04];
   gl.uniform3fv(U.uPal, new Float32Array([].concat.apply([], PAL)));
   // 0 = tumbling freely, 1 = locked to the grid
   gl.uniform1fv(U.uOrder, new Float32Array([0, .55, 1, .2, .9, 1]));
