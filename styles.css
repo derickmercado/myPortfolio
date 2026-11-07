@@ -64,6 +64,8 @@ img { max-width: 100%; display: block; }
    bottom of script.js), under a faint dotted grid. */
 .bg { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
 .bg__canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .75; }
+/* 3D scene (gl3d.js): sized in px by script so a phone's address bar can't stretch it */
+.bg__gl { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: .9; }
 
 /* static dotted grid: painted once, never re-composited */
 .bg__grid {
@@ -76,6 +78,10 @@ img { max-width: 100%; display: block; }
   background-image: radial-gradient(rgba(31,31,36,.16) 1px, transparent 1.5px);
   background-size: 32px 32px;
 }
+/* With the 3D scene running, cards go slightly see-through so the shapes
+   read behind them. No backdrop blur: that repaints on every scroll frame. */
+.has-3d { --card: rgba(255, 255, 255, .8); }
+.has-3d .contact { background: rgba(31, 31, 36, .88); }
 /* ── top bar ──────────────────────────────────────────── */
 /* Solid bar: a backdrop blur on a sticky header repaints every scroll frame. */
 .topbar {
@@ -605,6 +611,7 @@ section[id] { scroll-margin-top: 72px; }
 
   /* keep the busy canvas from competing with text on a small screen */
   .bg__canvas { opacity: .45; }
+  .bg__gl { opacity: .55; }
 }
 @media (max-width: 560px) {
   .contact__list li { flex-direction: column; gap: 4px; }

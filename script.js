@@ -251,6 +251,7 @@
 
   var cv = document.querySelector('.bg__canvas');
   if (!cv || !cv.getContext) return;
+  if (document.documentElement.classList.contains('has-3d')) { cv.remove(); return; }   // 3D scene is running (gl3d.js)
   var ctx = cv.getContext('2d');
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
