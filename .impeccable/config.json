@@ -11,6 +11,15 @@
         ],
         "createdAt": "2026-10-24T19:31:20.430Z",
         "reason": "assistant triage: flagged #B99BFF gradient is a 2px hover underline on .contact__list a; link text is #fff on the #1F1F24 contact card (~16:1)"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-11-07T20:40:01.458Z",
+        "reason": "assistant triage: only finding is .contact, which has padding clamp(32px,6vw,64px) in styles.css (>=32px inset, verified in screenshots); static detect doesn't load the stylesheet"
       }
     ]
   }

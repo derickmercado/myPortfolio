@@ -3,16 +3,17 @@
    a green hoodie, glasses and headphones) who walks visitors
    through the page and speaks each section's intro.
 
-   • Each section's line lives in its data-guide attribute.
-   • Wide screens (≥1100px): rides in a reserved left rail and
-     hops to a new spot as each section arrives, pointing at it.
-   • Small screens: a slim dock at the bottom (head-and-torso
-     figure + its line), so the speech never floats over the
-     page; the page is padded so nothing stays hidden under it.
+   • He sits on the top edge of a card in each section, sneakers
+     dangling over it, so he scrolls with the page like he's
+     perched on that div. When the next section arrives he jumps
+     down onto its card and says that section's line.
+   • Each section's line lives in its data-guide attribute; the
+     card he sits on is listed in PERCH below.
    • No scroll listener and no rAF loop: an IntersectionObserver
-     picks the section, CSS transitions do the moving, so it
-     can't compete with the 3D scene (gl3d.js) for frames.
-   • Reduced motion: static figure, text appears instantly.
+     picks the section and CSS transitions do the jumping, so it
+     can't compete with the 3D scene (gl3d.js) for frames. Card
+     positions are measured only on load/resize, never mid-scroll.
+   • Reduced motion: no jumping, text appears instantly.
    ═══════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
@@ -25,6 +26,10 @@
   var sections = Array.prototype.slice.call(document.querySelectorAll('[data-guide]'));
   if (!sections.length || !('IntersectionObserver' in window)) return;
 
+  // the card he sits on in each section (same order as the sections)
+  var PERCH = ['.hero__actions .btn:last-child', '.entries > .entry', '.projects > .proj',
+               '.skills > .skills__row', '.flash', '.contact'];
+
   function store(get, val) {
     try {
       if (get) return localStorage.getItem(KEY) === '1';
@@ -32,31 +37,33 @@
     } catch (e) { return false; }
   }
 
-  /* ── the character ───────────────────────────────────── */
+  /* ── the character (viewBox 0 4 120 140; he sits on the line y=126) ── */
   var SKIN = '#C98B5E', SKIN_D = '#A86F47', HAIR = '#141414', HOOD = '#138A4C', HOOD_D = '#0E6B3A',
-      NEON = '#22E57A', INK = '#0C0F0D';
+      NEON = '#22E57A', INK = '#0C0F0D', JEANS = '#1C2A22';
+  var VB_TOP = 4, VB_H = 140, SEAT = 126;
   var SVG =
-    '<svg class="guide__svg" viewBox="0 0 120 176" focusable="false">' +
-      '<ellipse class="g-shadow" cx="60" cy="169" rx="27" ry="4.5" fill="#000" opacity=".5"/>' +
+    '<svg class="guide__svg" viewBox="0 ' + VB_TOP + ' 120 ' + VB_H + '" focusable="false">' +
       '<g class="g-body">' +
-        // legs + sneakers
-        '<g class="g-leg g-leg--l"><rect x="46" y="120" width="13" height="38" rx="6" fill="#1C2A22"/>' +
-          '<path d="M41 156h18a3 3 0 0 1 3 3v3.5H42a4 4 0 0 1-1-6.5z" fill="#E9F5EC"/>' +
-          '<rect x="41" y="161" width="21" height="2.6" rx="1.3" fill="' + NEON + '"/></g>' +
-        '<g class="g-leg g-leg--r"><rect x="61" y="120" width="13" height="38" rx="6" fill="#1C2A22"/>' +
-          '<path d="M58 159a3 3 0 0 1 3-3h18a4 4 0 0 1 1 6.5H58z" fill="#E9F5EC"/>' +
-          '<rect x="58" y="161" width="21" height="2.6" rx="1.3" fill="' + NEON + '"/></g>' +
+        // knees resting on the ledge, shins + sneakers dangling over it
+        '<rect x="42" y="116" width="16" height="14" rx="6" fill="' + JEANS + '"/>' +
+        '<rect x="62" y="116" width="16" height="14" rx="6" fill="' + JEANS + '"/>' +
+        '<g class="g-shin g-shin--l"><rect x="44.5" y="126" width="11" height="9" rx="4" fill="' + JEANS + '"/>' +
+          '<path d="M41 133.5h16a3 3 0 0 1 3 3v3.5H42a4 4 0 0 1-1-6.5z" fill="#E9F5EC"/>' +
+          '<rect x="41" y="138.4" width="19" height="2.4" rx="1.2" fill="' + NEON + '"/></g>' +
+        '<g class="g-shin g-shin--r"><rect x="64.5" y="126" width="11" height="9" rx="4" fill="' + JEANS + '"/>' +
+          '<path d="M60 136.5a3 3 0 0 1 3-3h16a4 4 0 0 1 1 6.5H60z" fill="#E9F5EC"/>' +
+          '<rect x="60" y="138.4" width="19" height="2.4" rx="1.2" fill="' + NEON + '"/></g>' +
         // back arm
         '<g class="g-arm g-arm--l"><rect x="27" y="77" width="13" height="37" rx="6.5" fill="' + HOOD_D + '"/>' +
           '<rect x="27" y="106" width="13" height="5" rx="2.5" fill="' + INK + '" opacity=".35"/>' +
           '<circle cx="33.5" cy="116" r="6" fill="' + SKIN + '"/></g>' +
         // hoodie
-        '<path d="M35 81Q37 69 60 68Q83 69 85 81L89 121Q60 130 31 121Z" fill="' + HOOD + '"/>' +
-        '<path d="M43 105h34l3 15Q60 125 40 120z" fill="' + HOOD_D + '"/>' +
+        '<path d="M35 81Q37 69 60 68Q83 69 85 81L88 119Q60 127 32 119Z" fill="' + HOOD + '"/>' +
+        '<path d="M43 103h34l2.5 14Q60 122 40.5 117z" fill="' + HOOD_D + '"/>' +
         '<path d="M44 71Q60 84 76 71" stroke="' + HOOD_D + '" stroke-width="5" fill="none" stroke-linecap="round"/>' +
         '<path d="M55 77v15M65 77v15" stroke="' + NEON + '" stroke-width="2" stroke-linecap="round"/>' +
         '<circle cx="55" cy="93" r="1.8" fill="' + NEON + '"/><circle cx="65" cy="93" r="1.8" fill="' + NEON + '"/>' +
-        // front arm (waves / points)
+        // front arm (waves)
         '<g class="g-arm g-arm--r"><rect x="80" y="77" width="13" height="37" rx="6.5" fill="' + HOOD + '"/>' +
           '<rect x="80" y="106" width="13" height="5" rx="2.5" fill="' + INK + '" opacity=".25"/>' +
           '<circle cx="86.5" cy="116" r="6" fill="' + SKIN + '"/></g>' +
@@ -86,12 +93,11 @@
     '</svg>';
 
   var guide = document.createElement('div');
-  guide.className = 'guide';
+  guide.className = 'guide bubble-left';
   guide.innerHTML =
     '<div class="guide__mover">' +
       '<p class="guide__bubble" aria-hidden="true"><span class="guide__text"></span><span class="guide__caret"></span></p>' +
-      '<button type="button" class="guide__fig" aria-label="Guide: replay the last message">' +
-        '<span class="guide__flip">' + SVG + '</span></button>' +
+      '<button type="button" class="guide__fig" aria-label="Guide: replay the last message">' + SVG + '</button>' +
       '<button type="button" class="guide__close" aria-label="Hide guide">' +
         '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>' +
       '</button>' +
@@ -107,28 +113,49 @@
   var mover = guide.querySelector('.guide__mover');
   var textEl = guide.querySelector('.guide__text');
 
-  /* ── layout (computed on resize only, never during scroll) ── */
-  var wide = false, spots = [];
-  var FIG_H = 141;                          // 96px-wide figure at 120:176
-  var FRACS = [.44, .52, .46, .56, .48, .54];
+  /* ── perches (measured on load/resize only, never during scroll) ── */
+  var spots = [];            // per section: { x, y, side, bw }
+  var figW = 120;
 
-  var svgEl = guide.querySelector('.guide__svg');
-  function layout() {
-    wide = wideMq.matches;
-    root.classList.toggle('guide-full', wide && !hidden);
-    root.classList.toggle('guide-compact', !wide && !hidden);
-    // dock mode shows head and torso only, so the figure fits the 64px bar
-    svgEl.setAttribute('viewBox', wide ? '0 0 120 176' : '16 4 88 104');
-    if (!wide) return;
-    var vh = window.innerHeight;
-    var rail = parseFloat(getComputedStyle(root).getPropertyValue('--rail')) || 236;
-    var x = 20;
-    guide.style.setProperty('--bubble-w', Math.max(150, rail - x - 30) + 'px');
-    spots = FRACS.map(function (f) {
-      var y = Math.round(vh * f - FIG_H / 2);
-      return Math.max(230, Math.min(vh - FIG_H - 24, y));   // keep room above for the bubble, below for the feet
+  // layout offsets ignore transforms, so reveal slides and hover lifts don't skew them
+  function abs(el) {
+    var x = 0, y = 0;
+    for (var e = el; e; e = e.offsetParent) { x += e.offsetLeft; y += e.offsetTop; }
+    return { x: x, y: y, w: el.offsetWidth, h: el.offsetHeight };
+  }
+
+  function measure() {
+    var wide = wideMq.matches;
+    figW = wide ? 120 : 86;
+    var figH = figW * VB_H / 120;
+    var sink = (VB_TOP + VB_H - SEAT) * figW / 120;   // how far the sneakers hang over the edge
+    guide.style.setProperty('--fig-w', figW + 'px');
+    guide.style.setProperty('--sink', sink.toFixed(1) + 'px');
+    var vw = root.clientWidth;
+    spots = sections.map(function (s, i) {
+      var el = s.querySelector(PERCH[i]);
+      if (!el) return spots[i - 1] || { x: 16, y: 120, side: 'right', bw: 220 };
+      var a = abs(el);
+      // sit near the right end of the card; on the hero button he perches on its
+      // corner, sneakers hanging off the end so they never sit over the label
+      var x = i === 0 ? a.x + a.w - figW * .35 : a.x + a.w - figW - (wide ? 24 : 8);
+      x = Math.max(8, Math.min(vw - figW - 8, x));
+      var room = x - Math.max(12, a.x) - 12;                  // space for the bubble on the left
+      var side = room >= 150 ? 'left' : 'right';
+      var bw = Math.min(wide ? 270 : 240, side === 'left' ? room : vw - (x + figW) - 22);
+      return { x: Math.round(x), y: Math.round(a.y + sink - figH), side: side, bw: Math.max(140, Math.round(bw)) };
     });
-    mover.style.transform = 'translate3d(' + x + 'px,' + (spots[current] || spots[0]) + 'px,0)';
+  }
+
+  function place(i, animate) {
+    var p = spots[i];
+    if (!p) return;
+    if (!animate) mover.style.transition = 'none';
+    mover.style.transform = 'translate3d(' + p.x + 'px,' + p.y + 'px,0)';
+    guide.classList.toggle('bubble-left', p.side === 'left');
+    guide.classList.toggle('bubble-right', p.side === 'right');
+    guide.style.setProperty('--bubble-w', p.bw + 'px');
+    if (!animate) requestAnimationFrame(function () { mover.style.transition = ''; });
   }
 
   /* ── speech ──────────────────────────────────────────── */
@@ -141,16 +168,16 @@
   }
 
   function say(text) {
-    quiet();
+    clearInterval(mouthTimer);
     guide.classList.add('is-saying');
     guide.classList.remove('is-done');
     if (reduced) { textEl.textContent = text; done(); return; }
-    var chars = Array.from(text), i = 0;   // Array.from keeps emoji whole
+    var chars = Array.from(text), n = 0;   // Array.from keeps emoji whole
     textEl.textContent = '';
     mouthTimer = setInterval(function () { guide.classList.toggle('is-mouth'); }, 110);
     (function tick() {
-      textEl.textContent = chars.slice(0, ++i).join('');
-      if (i < chars.length) later(tick, chars[i - 1] === '.' || chars[i - 1] === ',' ? 220 : 28);
+      textEl.textContent = chars.slice(0, ++n).join('');
+      if (n < chars.length) later(tick, chars[n - 1] === '.' || chars[n - 1] === ',' ? 220 : 28);
       else done();
     })();
   }
@@ -160,36 +187,34 @@
     guide.classList.add('is-done');
   }
 
-  function pose(name) {
+  function poseFor(i) {
     guide.classList.remove('pose-wave', 'pose-point', 'pose-cheer');
-    if (name) guide.classList.add('pose-' + name);
+    guide.classList.add(i === 0 ? 'pose-wave' : i === sections.length - 1 ? 'pose-cheer' : 'pose-point');
   }
 
-  /* ── moving between sections ─────────────────────────── */
+  /* ── jumping between sections ────────────────────────── */
   var current = -1;
   function go(i) {
     if (i === current || hidden) return;
     var first = current === -1;
     current = i;
-    var p = i === 0 ? 'wave' : i === sections.length - 1 ? 'cheer' : 'point';
-
-    if (wide && !first) {
-      mover.style.transform = 'translate3d(20px,' + spots[i] + 'px,0)';
-    }
-    if (!reduced && !first) {
-      // restart the hop without a forced reflow: drop the class, re-add it two frames later
-      guide.classList.remove('is-hop', 'is-walk');
-      requestAnimationFrame(function () {
-        requestAnimationFrame(function () {
-          guide.classList.add('is-hop', 'is-walk');
-          later(function () { guide.classList.remove('is-hop', 'is-walk'); }, 720);
-        });
-      });
-    }
-    pose(p);
+    quiet();
+    guide.classList.remove('is-saying');
     var line = sections[i].getAttribute('data-guide');
-    if (first) later(function () { say(line); }, reduced ? 0 : 650);
-    else later(function () { say(line); }, reduced ? 0 : 380);
+
+    if (first || reduced) {
+      place(i, false);
+      poseFor(i);
+      later(function () { say(line); }, first && !reduced ? 650 : 0);
+      return;
+    }
+    guide.classList.add('is-fly');
+    place(i, true);
+    later(function () {
+      guide.classList.remove('is-fly');
+      poseFor(i);
+      say(line);
+    }, 900);
   }
 
   var io = new IntersectionObserver(function (entries) {
@@ -200,14 +225,18 @@
 
   /* ── hide / show ─────────────────────────────────────── */
   var hidden = store(true);
+  function apply() {
+    root.classList.toggle('guide-on', !hidden);
+    guide.hidden = hidden;
+    showBtn.hidden = !hidden;
+  }
   function setHidden(h) {
     hidden = h;
     store(false, h);
     quiet();
-    guide.hidden = h;
-    showBtn.hidden = !h;
-    if (h) { current = -1; io.disconnect(); layout(); return; }
-    layout();
+    apply();
+    if (h) { current = -1; io.disconnect(); return; }
+    measure();
     start();
   }
   guide.querySelector('.guide__close').addEventListener('click', function () {
@@ -219,8 +248,9 @@
     guide.querySelector('.guide__fig').focus();
   });
   guide.querySelector('.guide__fig').addEventListener('click', function () {
-    if (current < 0) return;
-    pose(current === 0 ? 'wave' : current === sections.length - 1 ? 'cheer' : 'point');
+    if (current < 0 || guide.classList.contains('is-fly')) return;
+    quiet();
+    poseFor(current);
     say(sections[current].getAttribute('data-guide'));
   });
 
@@ -233,18 +263,23 @@
   }
 
   /* ── boot ─────────────────────────────────────────────── */
-  guide.hidden = hidden;
-  showBtn.hidden = !hidden;
-  layout();
+  apply();
+  measure();
   if (!hidden) start();
 
-  var rz;
-  window.addEventListener('resize', function () {
-    clearTimeout(rz);
-    rz = setTimeout(layout, 150);
-  });
-  wideMq.addEventListener('change', function () {
-    layout();
-    if (!hidden && current >= 0) say(sections[current].getAttribute('data-guide'));
-  });
+  // re-measure when the layout changes (fonts, images, resize, the flash deck
+  // changing height) — then snap to the current perch without a jump
+  var mt;
+  function remeasure() {
+    clearTimeout(mt);
+    mt = setTimeout(function () {
+      if (hidden) return;
+      measure();
+      if (current >= 0 && !guide.classList.contains('is-fly')) place(current, false);
+    }, 120);
+  }
+  window.addEventListener('resize', remeasure);
+  window.addEventListener('load', remeasure);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(remeasure);
+  if ('ResizeObserver' in window) new ResizeObserver(remeasure).observe(document.body);
 })();
