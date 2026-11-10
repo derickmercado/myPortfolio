@@ -1,19 +1,20 @@
 /* ═══════════════════════════════════════════════════════════
    Tour guide — an original inline-SVG character (a developer in
-   a green hoodie, glasses and headphones) who walks visitors
-   through the page and speaks each section's intro.
+   a green hoodie, glasses and headphones) with a jetpack, who
+   flies visitors through the page and speaks each section's intro.
 
-   • He sits on the top edge of a card in each section, sneakers
-     dangling over it, so he scrolls with the page like he's
-     perched on that div. When the next section arrives he jumps
-     down onto its card and says that section's line.
-   • Each section's line lives in its data-guide attribute; the
-     card he sits on is listed in PERCH below.
-   • No scroll listener and no rAF loop: an IntersectionObserver
-     picks the section and CSS transitions do the jumping, so it
-     can't compete with the 3D scene (gl3d.js) for frames. Card
-     positions are measured only on load/resize, never mid-scroll.
-   • Reduced motion: no jumping, text appears instantly.
+   • He flies in with a loop, then hovers above the first card of
+     whichever section is on screen and says that section's line
+     (the text lives in each section's data-guide attribute).
+   • When that spot scrolls away he cruises down to the bottom-right
+     corner and tags along; the next section sends him flying again.
+   • Flights follow a curved path, he banks into turns, the jets
+     flare while you scroll, and he leaves a short spark trail.
+   • One small rAF loop that only runs while he is moving or the
+     page is scrolling; it writes transforms only and reads no
+     layout (card positions are measured on load/resize).
+   • Reduced motion: he stays parked in the corner, text appears
+     instantly.
    ═══════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
@@ -26,7 +27,7 @@
   var sections = Array.prototype.slice.call(document.querySelectorAll('[data-guide]'));
   if (!sections.length || !('IntersectionObserver' in window)) return;
 
-  // the card he sits on in each section (same order as the sections)
+  // the card he hovers above in each section (same order as the sections)
   var PERCH = ['.hero__actions .btn:last-child', '.entries > .entry', '.projects > .proj',
                '.skills > .skills__row', '.flash', '.contact'];
 
@@ -37,20 +38,29 @@
     } catch (e) { return false; }
   }
 
-  /* ── the character (viewBox 0 4 120 140; he sits on the line y=126) ── */
+  /* ── the character (viewBox 0 4 120 146; he hovers; flames end near y=148) ── */
   var SKIN = '#C98B5E', SKIN_D = '#A86F47', HAIR = '#141414', HOOD = '#138A4C', HOOD_D = '#0E6B3A',
       NEON = '#22E57A', INK = '#0C0F0D', JEANS = '#1C2A22';
-  var VB_TOP = 4, VB_H = 140, SEAT = 126;
+  var VB_TOP = 4, VB_H = 146;
   var SVG =
     '<svg class="guide__svg" viewBox="0 ' + VB_TOP + ' 120 ' + VB_H + '" focusable="false">' +
       '<g class="g-body">' +
-        // knees resting on the ledge, shins + sneakers dangling over it
-        '<rect x="42" y="116" width="16" height="14" rx="6" fill="' + JEANS + '"/>' +
-        '<rect x="62" y="116" width="16" height="14" rx="6" fill="' + JEANS + '"/>' +
-        '<g class="g-shin g-shin--l"><rect x="44.5" y="126" width="11" height="9" rx="4" fill="' + JEANS + '"/>' +
+        // jetpack thrusters (behind the arms) and their flames
+        '<g class="g-jet">' +
+          '<path class="g-flame" d="M22.5 123Q21 133 28 148Q35 133 33.5 123Z" fill="' + NEON + '" opacity=".9"/>' +
+          '<path class="g-flame" d="M25.2 123Q24.5 129 28 137Q31.5 129 30.8 123Z" fill="#E4FFEF"/>' +
+          '<path class="g-flame g-flame--r" d="M86.5 123Q85 133 92 148Q99 133 97.5 123Z" fill="' + NEON + '" opacity=".9"/>' +
+          '<path class="g-flame g-flame--r" d="M89.2 123Q88.5 129 92 137Q95.5 129 94.8 123Z" fill="#E4FFEF"/>' +
+          '<rect x="21.5" y="94" width="13" height="28" rx="5" fill="#1B221E" stroke="' + NEON + '" stroke-width="1.5"/>' +
+          '<rect x="85.5" y="94" width="13" height="28" rx="5" fill="#1B221E" stroke="' + NEON + '" stroke-width="1.5"/>' +
+          '<rect x="23" y="120" width="10" height="5" rx="2" fill="' + INK + '"/>' +
+          '<rect x="87" y="120" width="10" height="5" rx="2" fill="' + INK + '"/>' +
+        '</g>' +
+        // legs hang free while he hovers
+        '<g class="g-shin g-shin--l"><rect x="44.5" y="113" width="11" height="22" rx="5" fill="' + JEANS + '"/>' +
           '<path d="M41 133.5h16a3 3 0 0 1 3 3v3.5H42a4 4 0 0 1-1-6.5z" fill="#E9F5EC"/>' +
           '<rect x="41" y="138.4" width="19" height="2.4" rx="1.2" fill="' + NEON + '"/></g>' +
-        '<g class="g-shin g-shin--r"><rect x="64.5" y="126" width="11" height="9" rx="4" fill="' + JEANS + '"/>' +
+        '<g class="g-shin g-shin--r"><rect x="64.5" y="113" width="11" height="22" rx="5" fill="' + JEANS + '"/>' +
           '<path d="M60 136.5a3 3 0 0 1 3-3h16a4 4 0 0 1 1 6.5H60z" fill="#E9F5EC"/>' +
           '<rect x="60" y="138.4" width="19" height="2.4" rx="1.2" fill="' + NEON + '"/></g>' +
         // back arm
@@ -94,10 +104,13 @@
 
   var guide = document.createElement('div');
   guide.className = 'guide bubble-left';
+  var sparks = '';
+  for (var k = 0; k < 14; k++) sparks += '<i class="guide__spark"></i>';
   guide.innerHTML =
+    '<div class="guide__sparks" aria-hidden="true">' + sparks + '</div>' +
     '<div class="guide__mover">' +
       '<p class="guide__bubble" aria-hidden="true"><span class="guide__text"></span><span class="guide__caret"></span></p>' +
-      '<button type="button" class="guide__fig" aria-label="Guide: replay the last message">' + SVG + '</button>' +
+      '<div class="guide__tilt"><button type="button" class="guide__fig" aria-label="Guide: replay the last message">' + SVG + '</button></div>' +
       '<button type="button" class="guide__close" aria-label="Hide guide">' +
         '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>' +
       '</button>' +
@@ -111,11 +124,15 @@
   document.body.appendChild(showBtn);
 
   var mover = guide.querySelector('.guide__mover');
+  var tilt = guide.querySelector('.guide__tilt');
   var textEl = guide.querySelector('.guide__text');
+  var sparkEls = Array.prototype.slice.call(guide.querySelectorAll('.guide__spark'));
+  var canAnimate = typeof tilt.animate === 'function';
 
-  /* ── perches (measured on load/resize only, never during scroll) ── */
-  var spots = [];            // per section: { x, y, side, bw }
-  var figW = 120;
+  /* ── geometry (measured on load/resize only, never during scroll) ── */
+  var spots = [];            // per section, in page coordinates: { x, y }
+  var figW = 104, figH = 126, vw = 0, vh = 0, topSafe = 84;
+  var DOCK_SCALE = .72;
 
   // layout offsets ignore transforms, so reveal slides and hover lifts don't skew them
   function abs(el) {
@@ -126,49 +143,159 @@
 
   function measure() {
     var wide = wideMq.matches;
-    figW = wide ? 120 : 86;
-    var figH = figW * VB_H / 120;
-    var sink = (VB_TOP + VB_H - SEAT) * figW / 120;   // how far the sneakers hang over the edge
+    figW = wide ? 104 : 74;
+    figH = figW * VB_H / 120;
     guide.style.setProperty('--fig-w', figW + 'px');
-    guide.style.setProperty('--sink', sink.toFixed(1) + 'px');
-    var vw = root.clientWidth;
+    vw = root.clientWidth; vh = window.innerHeight;
+    var bar = document.querySelector('.topbar');
+    topSafe = (bar ? bar.offsetHeight : 72) + 6;
     spots = sections.map(function (s, i) {
       var el = s.querySelector(PERCH[i]);
-      if (!el) return spots[i - 1] || { x: 16, y: 120, side: 'right', bw: 220 };
-      var a = abs(el);
-      // sit near the right end of the card; on the hero button he perches on its
-      // corner, sneakers hanging off the end so they never sit over the label
-      var x = i === 0 ? a.x + a.w - figW * .35 : a.x + a.w - figW - (wide ? 24 : 8);
-      x = Math.max(8, Math.min(vw - figW - 8, x));
-      var room = x - Math.max(12, a.x) - 12;                  // space for the bubble on the left
-      var side = room >= 150 ? 'left' : 'right';
-      var bw = Math.min(wide ? 270 : 240, side === 'left' ? room : vw - (x + figW) - 22);
-      return { x: Math.round(x), y: Math.round(a.y + sink - figH), side: side, bw: Math.max(140, Math.round(bw)) };
+      if (!el) return spots[i - 1] || { x: vw - figW - 16, y: 200 };
+      var a = abs(el), x, y;
+      if (i === 0 && wide) {            // hero: hovering just right of the buttons
+        x = a.x + a.w + 34; y = a.y + a.h - figH + 62;
+      } else {                          // above the card's top-right corner, jets just over its edge
+        x = a.x + a.w - figW - (wide ? 28 : 6); y = a.y - figH + (i === 0 || i === 4 ? 2 : 12);   // (kept clear of the buttons / tab row)
+      }
+      return { x: Math.round(Math.max(8, Math.min(vw - figW - 8, x))), y: Math.round(y) };
     });
   }
 
-  function place(i, animate) {
-    var p = spots[i];
-    if (!p) return;
-    if (!animate) mover.style.transition = 'none';
-    mover.style.transform = 'translate3d(' + p.x + 'px,' + p.y + 'px,0)';
-    guide.classList.toggle('bubble-left', p.side === 'left');
-    guide.classList.toggle('bubble-right', p.side === 'right');
-    guide.style.setProperty('--bubble-w', p.bw + 'px');
-    if (!animate) requestAnimationFrame(function () { mover.style.transition = ''; });
+  function dockPos() {
+    return { x: vw - figW - (wideMq.matches ? 10 : 2), y: vh - figH - 4 };
   }
+
+  /* ── flight state ────────────────────────────────────── */
+  var current = -1;                  // section index
+  var mode = '';                     // 'spot' (hovering by the section) | 'dock' (corner)
+  var pos = { x: 0, y: 0 };          // viewport position of the figure's top-left
+  var flight = null;                 // { x0, y0, t0, dur, loop, dir }
+  var rot = 0, scale = 1, lag = 0, sv = 0;
+  var lastY = window.pageYOffset, lastT = 0, lastScroll = 0, lastSpark = 0, sparkI = 0;
+  var raf = 0, pending = null, hideTimer = 0;
+
+  function wantMode() {
+    if (current < 0) return 'dock';
+    var y = spots[current].y - window.pageYOffset;
+    // he stays by the section only while that spot is comfortably on screen
+    return (y >= topSafe && y <= vh - figH - 8) ? 'spot' : 'dock';
+  }
+  function targetFor(m) {
+    if (m === 'spot') return { x: spots[current].x, y: spots[current].y - window.pageYOffset };
+    return dockPos();
+  }
+
+  function setBubbleSide() {
+    var docked = mode === 'dock';
+    var cx = pos.x + figW / 2;
+    var side = cx > vw / 2 ? 'left' : 'right';
+    var room = side === 'left' ? pos.x - 18 : vw - (pos.x + figW) - 22;
+    guide.classList.toggle('bubble-left', side === 'left');
+    guide.classList.toggle('bubble-right', side === 'right');
+    guide.classList.toggle('is-docked', docked);
+    guide.style.setProperty('--bubble-w', Math.max(140, Math.min(wideMq.matches ? 270 : 236, Math.round(room))) + 'px');
+  }
+
+  function write() {
+    mover.style.transform = 'translate3d(' + pos.x.toFixed(1) + 'px,' + (pos.y + lag).toFixed(1) + 'px,0)';
+    tilt.style.transform = 'rotate(' + rot.toFixed(2) + 'deg) scale(' + scale.toFixed(3) + ')';
+  }
+
+  function fly(toMode, loop) {
+    mode = toMode;
+    var t = targetFor(mode);
+    var dist = Math.hypot(t.x - pos.x, t.y - pos.y);
+    flight = {
+      x0: pos.x, y0: pos.y, s0: scale, t0: performance.now(),
+      dur: Math.max(650, Math.min(1500, 480 + dist * 1.05)) + (loop ? 550 : 0),
+      loop: !!loop, dir: t.x >= pos.x ? 1 : -1,
+      lift: Math.min(190, 40 + dist * .32)
+    };
+    guide.classList.add('is-fly');
+    wake();
+  }
+
+  function emitSpark(now) {
+    if (!canAnimate || now - lastSpark < 38) return;
+    lastSpark = now;
+    var el = sparkEls[sparkI++ % sparkEls.length];
+    var side = sparkI % 2 ? .3 : .7;
+    var x = pos.x + figW * side + (Math.random() - .5) * 6, y = pos.y + lag + figH * .9;
+    var dx = (Math.random() - .5) * 26, dy = 22 + Math.random() * 26;
+    el.animate([
+      { transform: 'translate3d(' + x + 'px,' + y + 'px,0) scale(1)', opacity: .95 },
+      { transform: 'translate3d(' + (x + dx) + 'px,' + (y + dy) + 'px,0) scale(.15)', opacity: 0 }
+    ], { duration: 520 + Math.random() * 260, easing: 'cubic-bezier(.2,.6,.4,1)' });
+  }
+
+  function ease(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+
+  function frame(now) {
+    raf = 0;
+    var dt = Math.min(.05, (now - lastT) / 1000 || .016); lastT = now;
+
+    // scroll speed → jets flare and he lags a little behind the page
+    var y = window.pageYOffset;
+    var v = (y - lastY) / dt; lastY = y;
+    sv += (v - sv) * Math.min(1, dt * 10);
+    var lagTo = Math.max(-34, Math.min(34, -sv * .03));
+    lag += (lagTo - lag) * Math.min(1, dt * 7);
+    var scrolling = now - lastScroll < 160;
+
+    // the spot scrolled away (or came back): change where he lives
+    var want = wantMode();
+    if (want !== mode && current >= 0) fly(want, false);
+
+    var px = pos.x, rotTo = 0, scaleTo = mode === 'dock' ? DOCK_SCALE : 1;
+    var t = targetFor(mode);
+    if (flight) {
+      var p = Math.min(1, (now - flight.t0) / flight.dur), e = ease(p);
+      var arc = Math.sin(e * Math.PI);                       // lifts up and over
+      pos.x = flight.x0 + (t.x - flight.x0) * e;
+      pos.y = flight.y0 + (t.y - flight.y0) * e - arc * flight.lift;
+      scale = flight.s0 + (scaleTo - flight.s0) * e;
+      var spin = 0;
+      if (flight.loop) {                                     // a loop-the-loop mid-flight
+        var u = Math.max(0, Math.min(1, (p - .22) / .5)), ue = ease(u), R = Math.min(84, vh * .12);
+        pos.x += Math.sin(ue * Math.PI * 2) * R * flight.dir;
+        pos.y += (Math.cos(ue * Math.PI * 2) - 1) * R;
+        spin = ue * 360 * flight.dir;
+      }
+      rot = spin + Math.max(-26, Math.min(26, (pos.x - px) / dt * .05)) * (1 - e * e);
+      emitSpark(now);
+      if (p >= 1) {
+        flight = null; rot = 0;
+        guide.classList.remove('is-fly');
+        setBubbleSide();
+        if (pending) { var f = pending; pending = null; f(); }
+      }
+    } else {
+      pos.x = t.x; pos.y = t.y;
+      scale += (scaleTo - scale) * Math.min(1, dt * 8);
+      rotTo = Math.max(-12, Math.min(12, -sv * .008));       // leans into the scroll
+      rot += (rotTo - rot) * Math.min(1, dt * 8);
+      if (scrolling && Math.abs(sv) > 500) emitSpark(now);
+    }
+    guide.classList.toggle('is-boost', !!flight || (scrolling && Math.abs(sv) > 250));
+    write();
+
+    if (flight || scrolling || Math.abs(lag) > .3 || Math.abs(rot) > .2 || Math.abs(scale - scaleTo) > .004) wake();
+  }
+  function wake() { if (!raf && !hidden && !reduced) raf = requestAnimationFrame(frame); }
 
   /* ── speech ──────────────────────────────────────────── */
   var timers = [], mouthTimer = 0;
   function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
   function quiet() {
     timers.forEach(clearTimeout); timers = [];
-    clearInterval(mouthTimer);
+    clearInterval(mouthTimer); clearTimeout(hideTimer);
     guide.classList.remove('is-mouth');
   }
 
   function say(text) {
-    clearInterval(mouthTimer);
+    clearInterval(mouthTimer); clearTimeout(hideTimer);
+    setBubbleSide();
     guide.classList.add('is-saying');
     guide.classList.remove('is-done');
     if (reduced) { textEl.textContent = text; done(); return; }
@@ -185,6 +312,11 @@
     clearInterval(mouthTimer);
     guide.classList.remove('is-mouth');
     guide.classList.add('is-done');
+    // in the corner the bubble tidies itself away; tap him to hear it again
+    hideTimer = setTimeout(function tidy() {
+      if (mode === 'dock' && !flight) guide.classList.remove('is-saying');
+      else hideTimer = setTimeout(tidy, 1500);
+    }, 4200);
   }
 
   function poseFor(i) {
@@ -192,8 +324,7 @@
     guide.classList.add(i === 0 ? 'pose-wave' : i === sections.length - 1 ? 'pose-cheer' : 'pose-point');
   }
 
-  /* ── jumping between sections ────────────────────────── */
-  var current = -1;
+  /* ── touring ─────────────────────────────────────────── */
   function go(i) {
     if (i === current || hidden) return;
     var first = current === -1;
@@ -202,19 +333,18 @@
     guide.classList.remove('is-saying');
     var line = sections[i].getAttribute('data-guide');
 
-    if (first || reduced) {
-      place(i, false);
-      poseFor(i);
-      later(function () { say(line); }, first && !reduced ? 650 : 0);
+    if (reduced) {
+      mode = 'dock'; pos = dockPos(); scale = DOCK_SCALE; write();
+      poseFor(i); say(line);
       return;
     }
-    guide.classList.add('is-fly');
-    place(i, true);
-    later(function () {
-      guide.classList.remove('is-fly');
-      poseFor(i);
-      say(line);
-    }, 900);
+    if (first) {                      // fly in from off-screen
+      pos = { x: -figW - 40, y: vh * .32 }; scale = .8; write();
+      guide.classList.add('is-in');
+    }
+    pending = function () { poseFor(i); say(line); };
+    guide.classList.remove('pose-wave', 'pose-point', 'pose-cheer');
+    fly(wantMode(), first || i === sections.length - 1);
   }
 
   var io = new IntersectionObserver(function (entries) {
@@ -222,6 +352,8 @@
       if (e.isIntersecting) go(sections.indexOf(e.target));
     });
   }, { rootMargin: '-45% 0px -45% 0px' });   // the section crossing the middle of the screen
+
+  window.addEventListener('scroll', function () { lastScroll = performance.now(); wake(); }, { passive: true });
 
   /* ── hide / show ─────────────────────────────────────── */
   var hidden = store(true);
@@ -235,7 +367,11 @@
     store(false, h);
     quiet();
     apply();
-    if (h) { current = -1; io.disconnect(); return; }
+    if (h) {
+      current = -1; flight = null; pending = null; io.disconnect();
+      guide.classList.remove('is-fly', 'is-in', 'is-saying');
+      return;
+    }
     measure();
     start();
   }
@@ -248,17 +384,14 @@
     guide.querySelector('.guide__fig').focus();
   });
   guide.querySelector('.guide__fig').addEventListener('click', function () {
-    if (current < 0 || guide.classList.contains('is-fly')) return;
+    if (current < 0 || flight) return;
     quiet();
     poseFor(current);
     say(sections[current].getAttribute('data-guide'));
   });
 
   function start() {
-    if (!reduced) {
-      guide.classList.add('is-enter');
-      later(function () { guide.classList.remove('is-enter'); }, 950);
-    }
+    lastY = window.pageYOffset; lastT = performance.now();
     sections.forEach(function (s) { io.observe(s); });
   }
 
@@ -268,14 +401,17 @@
   if (!hidden) start();
 
   // re-measure when the layout changes (fonts, images, resize, the flash deck
-  // changing height) — then snap to the current perch without a jump
+  // changing height); he then glides to wherever his spot moved
   var mt;
   function remeasure() {
     clearTimeout(mt);
     mt = setTimeout(function () {
       if (hidden) return;
       measure();
-      if (current >= 0 && !guide.classList.contains('is-fly')) place(current, false);
+      if (current < 0) return;
+      if (reduced) { pos = dockPos(); write(); setBubbleSide(); return; }
+      if (!flight) setBubbleSide();
+      wake();
     }, 120);
   }
   window.addEventListener('resize', remeasure);

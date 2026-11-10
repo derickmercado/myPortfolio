@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════
    Derick Myles M. Mercado — portfolio
    Direction: dark terminal-black page, Poppins throughout, one
-   neon-green accent, green-edged cards, an SVG tour guide.
+   neon-green accent, green-edged cards, a flying SVG tour guide.
    ═══════════════════════════════════════════════════════════ */
 
 :root {
@@ -635,45 +635,37 @@ section[id] { scroll-margin-top: 72px; }
 }
 
 /* ── tour guide (guide.js) ────────────────────────────────
-   An inline-SVG character who sits on the top edge of a card in
-   each section (so it scrolls with the page) and jumps down to the
-   next card as you scroll. Transform/opacity animations only. */
+   An inline-SVG character with a jetpack. guide.js flies him between
+   sections (fixed to the viewport, transforms only); everything here
+   is his look, his poses and the speech bubble. */
 
-/* phones: leave room above the hero buttons for the guide to sit on them,
-   and keep the top-right of the tab row clear for its dangling sneakers */
-html.guide-on .hero__actions { margin-top: 128px; }
-html.guide-on .flash__tabs { padding-right: 150px; }
+/* phones: leave room above the hero buttons for him to hover there */
 @media (max-width: 1099px) {
-  html.guide-on .hero__actions { margin-top: 112px; }
-  html.guide-on .flash__tabs { padding-right: 78px; justify-content: flex-start; }
+  html.guide-on .hero__actions { margin-top: 116px; }
 }
 
-.guide { position: absolute; left: 0; top: 0; z-index: 40; width: 0; height: 0; pointer-events: none; }
+.guide { position: fixed; left: 0; top: 0; z-index: 40; width: 0; height: 0; pointer-events: none; }
 .guide[hidden] { display: none; }
+.guide:not(.is-in) .guide__mover { visibility: hidden; }     /* until he flies in */
 
-.guide__mover {
-  position: absolute; left: 0; top: 0;
-  width: var(--fig-w, 120px);
-  transition: transform .9s cubic-bezier(.45, .05, .25, 1);
-  will-change: transform;
-}
+.guide__mover { position: absolute; left: 0; top: 0; width: var(--fig-w, 104px); will-change: transform; }
+.guide__tilt { transform-origin: 50% 55%; will-change: transform; }
 
 /* the character */
 .guide__fig {
   display: block; width: 100%; padding: 0; border: 0; background: none; cursor: pointer;
   pointer-events: auto; color: inherit;
   -webkit-tap-highlight-color: transparent;
+  animation: g-hover 3.2s ease-in-out infinite;
 }
 .guide__fig:focus-visible { outline-offset: 2px; border-radius: 12px; }
 .guide__svg { display: block; width: 100%; height: auto; overflow: visible; }
-
-.guide.is-enter .guide__fig { animation: guide-in .9s cubic-bezier(.34, 1.4, .5, 1) both; }
-@keyframes guide-in { from { opacity: 0; transform: translateY(30px) scale(.6); } }
+.guide.is-fly .guide__fig { animation-play-state: paused; }
 
 /* parts pivot around their own joints */
-.g-arm, .g-shin, .g-eyes, .g-head, .g-body { transform-box: fill-box; }
+.g-arm, .g-shin, .g-eyes, .g-head, .g-body, .g-flame { transform-box: fill-box; }
 .g-arm  { transform-origin: 50% 9%; transition: transform .45s cubic-bezier(.34, 1.4, .5, 1); }
-.g-shin { transform-origin: 50% 0; }
+.g-shin { transform-origin: 50% 0; transition: rotate .3s var(--ease); }
 .g-eyes { transform-origin: 50% 50%; animation: g-blink 4.6s infinite; }
 .g-head { transform-origin: 50% 100%; animation: g-bob 3.4s ease-in-out infinite; transition: rotate .4s var(--ease); }
 .g-body { transform-origin: 50% 100%; }
@@ -681,46 +673,53 @@ html.guide-on .flash__tabs { padding-right: 150px; }
 .g-arm--l { transform: rotate(7deg); }
 .g-arm--r { transform: rotate(-7deg); }
 
-/* sitting: sneakers swing gently over the edge */
+/* hovering: legs sway, jets flicker */
 .guide .g-shin--l { animation: g-swing 2.6s ease-in-out infinite; }
 .guide .g-shin--r { animation: g-swing 2.6s ease-in-out -1.3s infinite; }
+.g-flame { transform-origin: 50% 0; animation: g-flicker .13s ease-in-out infinite alternate; }
+.g-flame--r { animation-delay: -.07s; }
+.guide.is-boost .g-flame { animation-name: g-flicker-boost; }
 
-/* poses (the figure faces the viewer; "point" aims at the card it sits on) */
+/* in flight: arms out, legs trail behind */
+.guide.is-fly .g-arm--l { transform: rotate(58deg); }
+.guide.is-fly .g-arm--r { transform: rotate(-58deg); }
+.guide.is-fly .g-shin--l { rotate: 10deg; }
+.guide.is-fly .g-shin--r { rotate: -10deg; }
+
+/* poses (he faces the viewer; "point" aims at the card below him) */
 .guide.pose-wave  .g-arm--r { animation: g-wave 1.3s ease-in-out infinite; }
-.guide.pose-point.bubble-left  .g-arm--l { transform: rotate(72deg); }
+.guide.pose-point.bubble-left  .g-arm--l { transform: rotate(40deg); }
 .guide.pose-point.bubble-left  .g-head   { rotate: -6deg; }
-.guide.pose-point.bubble-right .g-arm--r { transform: rotate(-72deg); }
+.guide.pose-point.bubble-right .g-arm--r { transform: rotate(-40deg); }
 .guide.pose-point.bubble-right .g-head   { rotate: 6deg; }
 .guide.pose-cheer .g-arm--l { transform: rotate(150deg); }
 .guide.pose-cheer .g-arm--r { transform: rotate(-150deg); }
-
-/* jumping between cards: an arc on the body, legs tuck and kick */
-.guide.is-fly .g-body { animation: g-jump .9s cubic-bezier(.3, .6, .4, 1); }
-.guide.is-fly .g-shin--l, .guide.is-fly .g-shin--r { animation: g-kick .22s ease-in-out infinite alternate; }
 
 /* talking: open/shut mouth swaps by opacity */
 .g-mouth__open { opacity: 0; }
 .guide.is-mouth .g-mouth__open { opacity: 1; }
 .guide.is-mouth .g-mouth__shut { opacity: 0; }
 
+@keyframes g-hover   { 50% { transform: translateY(-7px); } }
+@keyframes g-flicker { from { transform: scale(.85, .55); } to { transform: scale(1, .78); } }
+@keyframes g-flicker-boost { from { transform: scale(1.05, 1.35); } to { transform: scale(1.2, 1.8); } }
 @keyframes g-blink { 0%, 93%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
 @keyframes g-bob   { 50% { transform: translateY(1.4px); } }
 @keyframes g-wave  { 0%, 100% { transform: rotate(-145deg); } 50% { transform: rotate(-172deg); } }
-@keyframes g-swing { 0%, 100% { transform: rotate(-12deg); } 50% { transform: rotate(14deg); } }
-@keyframes g-kick  { from { transform: rotate(-30deg); } to { transform: rotate(30deg); } }
-@keyframes g-jump  {
-  0%   { transform: translateY(0) scaleY(1); }
-  10%  { transform: translateY(4px) scaleY(.88); }
-  45%  { transform: translateY(-70px) scaleY(1.05) rotate(-6deg); }
-  85%  { transform: translateY(0) scaleY(1.04); }
-  92%  { transform: translateY(3px) scaleY(.9); }
-  100% { transform: translateY(0) scaleY(1); }
+@keyframes g-swing { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(8deg); } }
+
+/* spark trail: a small pool of dots guide.js fires with the Web Animations API */
+.guide__sparks { position: absolute; left: 0; top: 0; }
+.guide__spark {
+  position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent-2); box-shadow: 0 0 10px 2px rgba(34,229,122,.55);
+  opacity: 0; will-change: transform, opacity;
 }
 
-/* speech bubble: beside the figure, sitting just above the card edge */
+/* speech bubble: beside the figure at chest height */
 .guide__bubble {
   position: absolute; z-index: 1;
-  bottom: calc(var(--sink, 14px) + 10px);
+  bottom: 44%;
   width: max-content; max-width: var(--bubble-w, 240px);
   margin: 0; padding: 11px 15px;
   background: var(--card); color: var(--ink);
@@ -733,6 +732,7 @@ html.guide-on .flash__tabs { padding-right: 150px; }
 }
 .guide.bubble-left  .guide__bubble { right: calc(100% + 10px); transform-origin: 100% 100%; }
 .guide.bubble-right .guide__bubble { left: calc(100% + 10px);  transform-origin: 0 100%; }
+.guide.is-docked.bubble-left .guide__bubble { right: calc(100% - 6px); bottom: 30%; }
 .guide__bubble::after {                        /* tail toward the figure */
   content: ''; position: absolute; bottom: 16px; width: 11px; height: 11px;
   background: var(--card); border: 1px solid rgba(34,229,122,.45);
@@ -747,11 +747,11 @@ html.guide-on .flash__tabs { padding-right: 150px; }
 }
 .guide.is-done .guide__caret { opacity: 0; animation: none; }
 @keyframes g-caret { 50% { opacity: 0; } }
-@media (max-width: 1099px) { .guide__bubble { font-size: 13.5px; padding: 10px 13px; } }
+@media (max-width: 1099px) { .guide__bubble { font-size: 13.5px; padding: 10px 13px; bottom: 16%; } }
 
 /* hide / show controls */
 .guide__close {
-  position: absolute; top: -6px; right: -12px;
+  position: absolute; top: -6px; right: -6px;
   width: 30px; height: 30px; border-radius: 50%;
   display: grid; place-items: center; padding: 0; cursor: pointer;
   border: 1px solid var(--rule); background: var(--soft); color: var(--muted);
@@ -759,7 +759,9 @@ html.guide-on .flash__tabs { padding-right: 150px; }
   opacity: 0; transition: opacity .2s, color .2s, background .2s;
 }
 .guide__mover:hover .guide__close, .guide__mover:focus-within .guide__close { opacity: 1; }
-@media (hover: none) { .guide__close { opacity: .85; } }
+@media (hover: none) { .guide.is-docked:not(.is-fly) .guide__close { opacity: .85; } }
+.guide.is-fly .guide__close { opacity: 0; pointer-events: none; }
+.guide.is-docked .guide__close { top: 8px; right: 0; width: 26px; height: 26px; }
 .guide__close:hover { color: var(--ink); background: var(--soft-2); }
 
 .guide-show {
@@ -773,9 +775,10 @@ html.guide-on .flash__tabs { padding-right: 150px; }
 .guide-show:hover { background: var(--soft-2); }
 
 @media (prefers-reduced-motion: reduce) {
-  .guide__mover, .guide__bubble, .g-arm, .g-head { transition: none !important; }
+  .guide__bubble, .g-arm, .g-head, .g-shin, .g-flame { transition: none !important; }
   .guide .g-eyes, .guide .g-head, .guide .g-arm--r, .guide .g-shin,
-  .guide .g-body, .guide .guide__fig, .guide__caret { animation: none !important; }
+  .guide .g-flame, .guide .guide__fig, .guide__caret { animation: none !important; }
+  .guide:not(.is-in) .guide__mover { visibility: visible; }
 }
 
 /* ── reduced motion ───────────────────────────────────── */
