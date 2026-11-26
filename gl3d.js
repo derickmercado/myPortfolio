@@ -40,7 +40,7 @@
   var TIERS = [
     { n: 220, dpr: 0.75 },
     { n: 420, dpr: 1.0  },
-    { n: 900, dpr: 1.5  }
+    { n: 640, dpr: 1.25 }
   ];
   var tier = (coarse || window.innerWidth < 720 || cores <= 4) ? 1 : 2;
 
@@ -400,12 +400,13 @@
     // nothing changing → 30fps is plenty and halves battery use
     if (!moving && now - lastDraw < 32) return;
 
-    // frame-rate probe: after warm-up, if it can't hold ~45fps, drop a tier
-    if (now > probe.start && probe.frames < 90) {
+    // frame-rate probe: keeps watching while things move (scrolling is when
+    // jank shows); if the page can't hold ~48fps over 60 frames, drop a tier
+    if (moving && now > probe.start && tier > 0) {
       probe.frames++; probe.sum += dt;
-      if (probe.frames === 90 && probe.sum / 90 > 1 / 45 && tier > 0) {
-        setTier(tier - 1);
-        probe = { start: now + 1000, frames: 0, sum: 0 };
+      if (probe.frames === 60) {
+        if (probe.sum / 60 > 1 / 48) { setTier(tier - 1); probe = { start: now + 1000, frames: 0, sum: 0 }; }
+        else { probe.frames = 0; probe.sum = 0; }
       }
     }
 
@@ -444,7 +445,11 @@
   });
   window.addEventListener('load', measure);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
-  if ('ResizeObserver' in window) new ResizeObserver(function () { measure(); }).observe(document.body);
+  // batched: the page height can change every frame (e.g. the flash deck animating its height)
+  var mq = 0;
+  if ('ResizeObserver' in window) new ResizeObserver(function () {
+    clearTimeout(mq); mq = setTimeout(measure, 100);
+  }).observe(document.body);
 
   var raf = requestAnimationFrame(loop);
   document.addEventListener('visibilitychange', function () {

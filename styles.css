@@ -714,8 +714,8 @@ section[id] { scroll-margin-top: 72px; }
 /* spark trail: a small pool of dots guide.js fires with the Web Animations API */
 .guide__sparks { position: absolute; left: 0; top: 0; }
 .guide__spark {
-  position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; border-radius: 50%;
-  background: var(--accent-2); box-shadow: 0 0 10px 2px rgba(34,229,122,.55);
+  position: absolute; left: -3px; top: -3px; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent-2);
   opacity: 0; will-change: transform, opacity;
 }
 
