@@ -39,64 +39,88 @@
   }
 
   /* ── the character (viewBox 0 4 120 146; he hovers; flames end near y=148) ── */
-  var SKIN = '#C98B5E', SKIN_D = '#A86F47', HAIR = '#141414', HOOD = '#D9962B', HOOD_D = '#A8701C',
-      NEON = '#F2B13C', INK = '#100E0C', JEANS = '#2A2622';
+  // Cream hoodie and denim so he stands out on the dark page; amber is kept
+  // for the accents (headphones, jetpack, drawstrings) like the rest of the site.
+  // Every big shape has a thin dark outline so he reads as one clean sticker.
+  var SKIN = '#C98B5E', SKIN_D = '#A86F47', HAIR = '#1B1613', HAIR_L = '#3D322B',
+      HOOD = '#EFE6D6', HOOD_D = '#D3C6AF', HOOD_DD = '#B9AA90',
+      NEON = '#F2B13C', NEON_D = '#B9802A', INK = '#100E0C', JEANS = '#3C5675', JEANS_D = '#2C4058';
+  var OL = ' stroke="' + INK + '" stroke-width="2" stroke-linejoin="round"';
   var VB_TOP = 4, VB_H = 146;
   var SVG =
     '<svg class="guide__svg" viewBox="0 ' + VB_TOP + ' 120 ' + VB_H + '" focusable="false">' +
       '<g class="g-body">' +
-        // jetpack thrusters (behind the arms) and their flames
+        // jetpack: two amber tanks behind the arms, their nozzles and flames
         '<g class="g-jet">' +
-          '<path class="g-flame" d="M22.5 123Q21 133 28 148Q35 133 33.5 123Z" fill="' + NEON + '" opacity=".9"/>' +
-          '<path class="g-flame" d="M25.2 123Q24.5 129 28 137Q31.5 129 30.8 123Z" fill="#FFF3D6"/>' +
-          '<path class="g-flame g-flame--r" d="M86.5 123Q85 133 92 148Q99 133 97.5 123Z" fill="' + NEON + '" opacity=".9"/>' +
-          '<path class="g-flame g-flame--r" d="M89.2 123Q88.5 129 92 137Q95.5 129 94.8 123Z" fill="#FFF3D6"/>' +
-          '<rect x="21.5" y="94" width="13" height="28" rx="5" fill="#24201B" stroke="' + NEON + '" stroke-width="1.5"/>' +
-          '<rect x="85.5" y="94" width="13" height="28" rx="5" fill="#24201B" stroke="' + NEON + '" stroke-width="1.5"/>' +
-          '<rect x="23" y="120" width="10" height="5" rx="2" fill="' + INK + '"/>' +
-          '<rect x="87" y="120" width="10" height="5" rx="2" fill="' + INK + '"/>' +
+          '<path class="g-flame" d="M22.5 124Q21 134 28 149Q35 134 33.5 124Z" fill="' + NEON + '" opacity=".92"/>' +
+          '<path class="g-flame" d="M25.2 124Q24.5 130 28 138Q31.5 130 30.8 124Z" fill="#FFF3D6"/>' +
+          '<path class="g-flame g-flame--r" d="M86.5 124Q85 134 92 149Q99 134 97.5 124Z" fill="' + NEON + '" opacity=".92"/>' +
+          '<path class="g-flame g-flame--r" d="M89.2 124Q88.5 130 92 138Q95.5 130 94.8 124Z" fill="#FFF3D6"/>' +
+          '<rect x="20.5" y="92" width="15" height="29" rx="7"' + OL + ' fill="' + NEON + '"/>' +
+          '<rect x="84.5" y="92" width="15" height="29" rx="7"' + OL + ' fill="' + NEON + '"/>' +
+          '<path d="M24 97v18M88 97v18" stroke="#FFD27A" stroke-width="2.4" stroke-linecap="round"/>' +
+          '<path d="M21.5 106h13M85.5 106h13" stroke="' + NEON_D + '" stroke-width="2.4"/>' +
+          '<path d="M23 120h10l-1.5 5h-7zM87 120h10l-1.5 5h-7z" fill="#3A332C"' + OL + '/>' +
         '</g>' +
         // legs hang free while he hovers
-        '<g class="g-shin g-shin--l"><rect x="44.5" y="113" width="11" height="22" rx="5" fill="' + JEANS + '"/>' +
-          '<path d="M41 133.5h16a3 3 0 0 1 3 3v3.5H42a4 4 0 0 1-1-6.5z" fill="#F4EFE8"/>' +
-          '<rect x="41" y="138.4" width="19" height="2.4" rx="1.2" fill="' + NEON + '"/></g>' +
-        '<g class="g-shin g-shin--r"><rect x="64.5" y="113" width="11" height="22" rx="5" fill="' + JEANS + '"/>' +
-          '<path d="M60 136.5a3 3 0 0 1 3-3h16a4 4 0 0 1 1 6.5H60z" fill="#F4EFE8"/>' +
-          '<rect x="60" y="138.4" width="19" height="2.4" rx="1.2" fill="' + NEON + '"/></g>' +
+        '<g class="g-shin g-shin--l"><rect x="44.5" y="112" width="11.5" height="23" rx="5"' + OL + ' fill="' + JEANS + '"/>' +
+          '<path d="M47 118v12" stroke="' + JEANS_D + '" stroke-width="2" stroke-linecap="round"/>' +
+          '<path d="M41 133.5h16a3 3 0 0 1 3 3v3.5H42a4 4 0 0 1-1-6.5z"' + OL + ' fill="#F4EFE8"/>' +
+          '<rect x="41.5" y="138" width="18" height="2.4" rx="1.2" fill="' + NEON + '"/></g>' +
+        '<g class="g-shin g-shin--r"><rect x="64" y="112" width="11.5" height="23" rx="5"' + OL + ' fill="' + JEANS + '"/>' +
+          '<path d="M73 118v12" stroke="' + JEANS_D + '" stroke-width="2" stroke-linecap="round"/>' +
+          '<path d="M60 136.5a3 3 0 0 1 3-3h16a4 4 0 0 1 1 6.5H60z"' + OL + ' fill="#F4EFE8"/>' +
+          '<rect x="60.5" y="138" width="18" height="2.4" rx="1.2" fill="' + NEON + '"/></g>' +
         // back arm
-        '<g class="g-arm g-arm--l"><rect x="27" y="77" width="13" height="37" rx="6.5" fill="' + HOOD_D + '"/>' +
-          '<rect x="27" y="106" width="13" height="5" rx="2.5" fill="' + INK + '" opacity=".35"/>' +
-          '<circle cx="33.5" cy="116" r="6" fill="' + SKIN + '"/></g>' +
-        // hoodie
-        '<path d="M35 81Q37 69 60 68Q83 69 85 81L88 119Q60 127 32 119Z" fill="' + HOOD + '"/>' +
+        '<g class="g-arm g-arm--l"><rect x="27" y="77" width="13" height="37" rx="6.5"' + OL + ' fill="' + HOOD_D + '"/>' +
+          '<rect x="27" y="105" width="13" height="5" rx="2.5" fill="' + HOOD_DD + '"/>' +
+          '<circle cx="33.5" cy="116" r="6"' + OL + ' fill="' + SKIN + '"/></g>' +
+        // hoodie: body, shading down the left side, kangaroo pocket, hood collar, drawstrings
+        '<path d="M35 81Q37 69 60 68Q83 69 85 81L88 119Q60 127 32 119Z"' + OL + ' fill="' + HOOD + '"/>' +
+        '<path d="M35.6 84Q38 99 37.5 119.6Q34 119.2 32 119L35 81Z" fill="' + HOOD_D + '"/>' +
         '<path d="M43 103h34l2.5 14Q60 122 40.5 117z" fill="' + HOOD_D + '"/>' +
-        '<path d="M44 71Q60 84 76 71" stroke="' + HOOD_D + '" stroke-width="5" fill="none" stroke-linecap="round"/>' +
-        '<path d="M55 77v15M65 77v15" stroke="' + NEON + '" stroke-width="2" stroke-linecap="round"/>' +
-        '<circle cx="55" cy="93" r="1.8" fill="' + NEON + '"/><circle cx="65" cy="93" r="1.8" fill="' + NEON + '"/>' +
+        '<path d="M45 103.5Q60 107 75 103.5" stroke="' + HOOD_DD + '" stroke-width="1.6" fill="none" stroke-linecap="round"/>' +
+        '<path d="M42 71Q60 87 78 71" stroke="' + HOOD_D + '" stroke-width="6" fill="none" stroke-linecap="round"/>' +
+        '<path d="M42 71Q60 87 78 71" stroke="' + HOOD_DD + '" stroke-width="1.4" fill="none" stroke-linecap="round" transform="translate(0 2.6)"/>' +
+        '<path d="M55 78v14M65 78v14" stroke="' + NEON + '" stroke-width="2.2" stroke-linecap="round"/>' +
+        '<rect x="53.2" y="91.5" width="3.6" height="4" rx="1" fill="' + NEON_D + '"/><rect x="63.2" y="91.5" width="3.6" height="4" rx="1" fill="' + NEON_D + '"/>' +
         // front arm (waves)
-        '<g class="g-arm g-arm--r"><rect x="80" y="77" width="13" height="37" rx="6.5" fill="' + HOOD + '"/>' +
-          '<rect x="80" y="106" width="13" height="5" rx="2.5" fill="' + INK + '" opacity=".25"/>' +
-          '<circle cx="86.5" cy="116" r="6" fill="' + SKIN + '"/></g>' +
+        '<g class="g-arm g-arm--r"><rect x="80" y="77" width="13" height="37" rx="6.5"' + OL + ' fill="' + HOOD + '"/>' +
+          '<rect x="80" y="105" width="13" height="5" rx="2.5" fill="' + HOOD_D + '"/>' +
+          '<circle cx="86.5" cy="116" r="6"' + OL + ' fill="' + SKIN + '"/></g>' +
         // head
         '<g class="g-head">' +
-          '<rect x="54" y="58" width="12" height="13" rx="4" fill="' + SKIN_D + '"/>' +
-          '<circle cx="36" cy="44" r="5" fill="' + SKIN_D + '"/><circle cx="84" cy="44" r="5" fill="' + SKIN_D + '"/>' +
-          '<circle cx="60" cy="42" r="24" fill="' + SKIN + '"/>' +
-          '<path d="M36 41Q34 16 60 15Q86 15 85 39Q79 28 67 27Q57 34 45 30Q39 34 36 41Z" fill="' + HAIR + '"/>' +
-          '<path d="M33 45Q32 11 60 11Q88 11 87 45" stroke="' + NEON + '" stroke-width="4.5" fill="none" stroke-linecap="round"/>' +
-          '<rect x="27.5" y="36" width="10" height="17" rx="4" fill="' + INK + '" stroke="' + NEON + '" stroke-width="2"/>' +
-          '<rect x="82.5" y="36" width="10" height="17" rx="4" fill="' + INK + '" stroke="' + NEON + '" stroke-width="2"/>' +
-          '<path d="M46 33q5-3.4 9.5 0M64.5 33q5-3.4 9.5 0" stroke="' + HAIR + '" stroke-width="2.2" fill="none" stroke-linecap="round"/>' +
-          '<g class="g-eyes"><ellipse cx="50.5" cy="41.5" rx="2.3" ry="2.7" fill="' + HAIR + '"/>' +
-            '<ellipse cx="69.5" cy="41.5" rx="2.3" ry="2.7" fill="' + HAIR + '"/></g>' +
-          '<rect x="43" y="35.5" width="15" height="11.5" rx="4" fill="rgba(255,255,255,.1)" stroke="' + INK + '" stroke-width="2"/>' +
-          '<rect x="62" y="35.5" width="15" height="11.5" rx="4" fill="rgba(255,255,255,.1)" stroke="' + INK + '" stroke-width="2"/>' +
-          '<path d="M58 40.5h4" stroke="' + INK + '" stroke-width="2"/>' +
-          '<circle cx="45.5" cy="52" r="3" fill="#E07A6A" opacity=".35"/><circle cx="74.5" cy="52" r="3" fill="#E07A6A" opacity=".35"/>' +
+          '<rect x="54" y="57" width="12" height="14" rx="4" fill="' + SKIN_D + '"/>' +
+          '<circle cx="36" cy="44" r="5"' + OL + ' fill="' + SKIN_D + '"/><circle cx="84" cy="44" r="5"' + OL + ' fill="' + SKIN_D + '"/>' +
+          '<circle cx="60" cy="42" r="24"' + OL + ' fill="' + SKIN + '"/>' +
+          '<path d="M44 58Q60 68 76 58Q70 65.5 60 65.5Q50 65.5 44 58Z" fill="' + SKIN_D + '" opacity=".45"/>' +
+          // hair: a full top with a swept fringe and a light streak
+          '<path d="M35.5 44Q31 17 58 13.5Q87 11.5 86 41Q83 32 76 29.5Q73 35 65 31.5Q59 37.5 51 32.5Q44 37 38.5 33.5Q36.5 38 35.5 44Z"' + OL + ' fill="' + HAIR + '"/>' +
+          '<path d="M48 20Q60 15 73 19.5" stroke="' + HAIR_L + '" stroke-width="2.6" fill="none" stroke-linecap="round"/>' +
+          // headphones
+          '<path d="M33 45Q32 11 60 11Q88 11 87 45" stroke="' + INK + '" stroke-width="7" fill="none" stroke-linecap="round"/>' +
+          '<path d="M33 45Q32 11 60 11Q88 11 87 45" stroke="' + NEON + '" stroke-width="4" fill="none" stroke-linecap="round"/>' +
+          '<rect x="27" y="35.5" width="11" height="18" rx="4.5" fill="#2A2520"' + OL + '/>' +
+          '<rect x="82" y="35.5" width="11" height="18" rx="4.5" fill="#2A2520"' + OL + '/>' +
+          '<rect x="29.5" y="39" width="6" height="11" rx="3" fill="' + NEON + '"/>' +
+          '<rect x="84.5" y="39" width="6" height="11" rx="3" fill="' + NEON + '"/>' +
+          // brows, eyes, glasses, nose, cheeks, mouth
+          '<path d="M45.5 32.5q5-3.6 10 0M64.5 32.5q5-3.6 10 0" stroke="' + HAIR + '" stroke-width="2.6" fill="none" stroke-linecap="round"/>' +
+          '<g class="g-eyes"><ellipse cx="50.5" cy="41.5" rx="2.4" ry="2.8" fill="' + HAIR + '"/>' +
+            '<ellipse cx="69.5" cy="41.5" rx="2.4" ry="2.8" fill="' + HAIR + '"/>' +
+            '<circle cx="51.4" cy="40.4" r=".8" fill="#fff"/><circle cx="70.4" cy="40.4" r=".8" fill="#fff"/></g>' +
+          '<rect x="43" y="35.5" width="15" height="11.5" rx="4" fill="rgba(255,255,255,.12)" stroke="' + INK + '" stroke-width="2.2"/>' +
+          '<rect x="62" y="35.5" width="15" height="11.5" rx="4" fill="rgba(255,255,255,.12)" stroke="' + INK + '" stroke-width="2.2"/>' +
+          '<path d="M45.5 38.5l3-2" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".55"/>' +
+          '<path d="M64.5 38.5l3-2" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".55"/>' +
+          '<path d="M58 40.5h4" stroke="' + INK + '" stroke-width="2.2"/>' +
+          '<path d="M60.5 46.5q1.8 2.6-.6 3.6" stroke="' + SKIN_D + '" stroke-width="1.8" fill="none" stroke-linecap="round"/>' +
+          '<ellipse cx="45.5" cy="52" rx="3.4" ry="2.4" fill="#E07A6A" opacity=".4"/><ellipse cx="74.5" cy="52" rx="3.4" ry="2.4" fill="#E07A6A" opacity=".4"/>' +
           '<g class="g-mouth">' +
-            '<path class="g-mouth__shut" d="M53 54Q60 60 67 54" stroke="#5A2A1E" stroke-width="2.4" fill="none" stroke-linecap="round"/>' +
-            '<g class="g-mouth__open"><ellipse cx="60" cy="56" rx="5" ry="4.2" fill="#4A1F17"/>' +
-              '<ellipse cx="60" cy="58.2" rx="3" ry="1.6" fill="#D9655A"/></g>' +
+            '<path class="g-mouth__shut" d="M53.5 54Q60 59.5 66.5 54" stroke="#5A2A1E" stroke-width="2.4" fill="none" stroke-linecap="round"/>' +
+            '<g class="g-mouth__open"><path d="M54 53.5h12Q66 61 60 61Q54 61 54 53.5Z" fill="#4A1F17"/>' +
+              '<path d="M55.5 53.8h9v1.8h-9z" fill="#fff"/>' +
+              '<ellipse cx="60" cy="59" rx="3" ry="1.5" fill="#D9655A"/></g>' +
           '</g>' +
         '</g>' +
       '</g>' +
