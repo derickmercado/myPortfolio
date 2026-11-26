@@ -3,12 +3,13 @@
 
    A few hundred cubes ("data blocks") re-assemble into a new
    shape for every section as you scroll:
-     0 hero      → floating cloud
-     1 work      → double-helix timeline
-     2 projects  → 3D bar chart / skyline
-     3 skills    → orbit rings
-     4 record    → rolling ledger sheet
-     5 contact   → everything locks into one solid cube
+     0 hero      → </>  (a developer)
+     1 work      → briefcase
+     2 projects  → an app window
+     3 skills    → gear (tools)
+     4 record    → award medal
+     5 contact   → envelope
+   Each icon is drawn on a tiny 2D canvas and voxelized into cubes.
 
    Performance:
    • one draw call; every shape lives in a float texture and
@@ -170,7 +171,7 @@
   var PAL_W = [.30, .26, .18, .14, .08, .04];
   gl.uniform3fv(U.uPal, new Float32Array([].concat.apply([], PAL)));
   // 0 = tumbling freely, 1 = locked to the grid
-  gl.uniform1fv(U.uOrder, new Float32Array([0, .55, 1, .2, .9, 1]));
+  gl.uniform1fv(U.uOrder, new Float32Array([1, 1, 1, 1, 1, 1]));
 
   /* ── shapes ──────────────────────────────────────────── */
   function rng(seed) {
@@ -184,6 +185,80 @@
   function shuffle(a, r) {
     for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
     return a;
+  }
+
+  /* ── icons (drawn in a 100×70 box; thick shapes survive coarse grids) ── */
+  var ICONS = [
+    { sweep: 'x', draw: function (c) {             // 0 hero: < > tag brackets around the photo (fitHero)
+      c.lineWidth = 8; c.lineJoin = 'miter'; c.lineCap = 'square';
+      c.beginPath(); c.moveTo(22, 12); c.lineTo(10, 35); c.lineTo(22, 58);
+      c.moveTo(78, 12); c.lineTo(90, 35); c.lineTo(78, 58); c.stroke();
+    } },
+    { sweep: 'y', draw: function (c) {             // 1 work: briefcase
+      c.lineWidth = 6; c.strokeRect(37, 6, 26, 14);
+      c.fillRect(6, 18, 88, 46);
+      c.globalCompositeOperation = 'destination-out'; c.fillRect(6, 36, 88, 5);
+      c.globalCompositeOperation = 'source-over'; c.fillRect(43, 31, 14, 15);
+    } },
+    { sweep: 'y', draw: function (c) {             // 2 projects: an app window
+      c.lineWidth = 6; c.strokeRect(5, 5, 90, 60); c.fillRect(5, 5, 90, 13);
+      c.globalCompositeOperation = 'destination-out';
+      [14, 24, 34].forEach(function (x) { c.beginPath(); c.arc(x, 11.5, 3, 0, 7); c.fill(); });
+      c.globalCompositeOperation = 'source-over';
+      c.fillRect(14, 27, 30, 29);
+      c.fillRect(52, 27, 34, 7); c.fillRect(52, 39, 26, 7); c.fillRect(52, 51, 30, 5);
+    } },
+    { sweep: 'y', draw: function (c) {             // 3 skills: a gear (tools)
+      c.translate(50, 35);
+      for (var k = 0; k < 8; k++) { c.rotate(Math.PI / 4); c.fillRect(-6.5, -33, 13, 14); }
+      c.beginPath(); c.arc(0, 0, 23, 0, 7); c.fill();
+      c.globalCompositeOperation = 'destination-out';
+      c.beginPath(); c.arc(0, 0, 10, 0, 7); c.fill();
+    } },
+    { sweep: 'y', draw: function (c) {             // 4 record: an award medal
+      c.beginPath(); c.moveTo(30, 0); c.lineTo(44, 0); c.lineTo(56, 28); c.lineTo(42, 28); c.closePath(); c.fill();
+      c.beginPath(); c.moveTo(70, 0); c.lineTo(56, 0); c.lineTo(44, 28); c.lineTo(58, 28); c.closePath(); c.fill();
+      c.beginPath(); c.arc(50, 46, 22, 0, 7); c.fill();
+      c.globalCompositeOperation = 'destination-out';
+      c.beginPath();
+      for (var k = 0; k < 10; k++) {
+        var a = -Math.PI / 2 + k * Math.PI / 5, rr = k % 2 ? 6 : 14;
+        c.lineTo(50 + Math.cos(a) * rr, 47 + Math.sin(a) * rr);
+      }
+      c.closePath(); c.fill();
+    } },
+    { sweep: 'y', draw: function (c) {             // 5 contact: an envelope
+      c.lineWidth = 7; c.lineJoin = 'round';
+      c.strokeRect(7, 9, 86, 52);
+      c.beginPath(); c.moveTo(7, 9); c.lineTo(50, 40); c.lineTo(93, 9); c.stroke();
+    } }
+  ];
+
+  // Rasterises an icon and picks the grid step that lands closest to (but
+  // under) ~85% of the cube budget. World size: about 9 × 6.3 units.
+  function voxelize(draw, n) {
+    var BW = 100, BH = 70, S = 3, WORLD = 9;
+    var cv2 = document.createElement('canvas'); cv2.width = BW * S; cv2.height = BH * S;
+    var c = cv2.getContext('2d');
+    c.scale(S, S); c.fillStyle = c.strokeStyle = '#fff';
+    draw(c);
+    var img = c.getImageData(0, 0, cv2.width, cv2.height).data;
+    function on(px, py) { return img[(Math.floor(py * S) * cv2.width + Math.floor(px * S)) * 4 + 3] > 127; }
+    function sample(step) {
+      var pts = [];
+      for (var y = step / 2; y < BH; y += step) for (var x = step / 2; x < BW; x += step) if (on(x, y)) pts.push([x, y]);
+      return pts;
+    }
+    var layers = n >= 400 ? 2 : 1, budget = n * .85 / layers, lo = 1.2, hi = 20, best = sample(hi), step = hi;
+    for (var it = 0; it < 18; it++) {           // binary search on the grid step
+      var mid = (lo + hi) / 2, p = sample(mid);
+      if (p.length <= budget) { hi = mid; best = p; step = mid; } else lo = mid;
+    }
+    var k = WORLD / BW, out = [];
+    best.forEach(function (p) {
+      for (var l = 0; l < layers; l++) out.push({ x: (p[0] - BW / 2) * k, y: (BH / 2 - p[1]) * k, l: l });
+    });
+    return { pts: out, sp: step * k, layers: layers, w: WORLD, h: BH * k };
   }
 
   var N = 0;
@@ -200,80 +275,22 @@
     function order() { var a = []; for (var i = 0; i < N; i++) a.push(i); return shuffle(a, r); }
     var i, k, o;
 
-    // 0 · cloud
-    o = order();
-    for (i = 0; i < N; i++) {
-      var u = r() * 2 - 1, th = r() * Math.PI * 2, rr = 2.6 + 4.2 * Math.cbrt(r()), q = Math.sqrt(1 - u * u);
-      put(0, o[i], Math.cos(th) * q * rr, u * rr * .8, Math.sin(th) * q * rr, .12 + .32 * r() * r(), r());
-    }
-
-    // 1 · double helix
-    o = order();
-    for (i = 0; i < N; i++) {
-      var t = i / N, strand = i % 2, rung = i % 7 === 0;
-      var ang = t * Math.PI * 9 + strand * Math.PI, x = (t - .5) * 26;
-      var rad = rung ? 1.7 * (r() * 2 - 1) : 1.7;
-      put(1, o[i], x, Math.cos(ang) * rad, Math.sin(ang) * rad, rung ? .12 : .24, t);
-    }
-
-    // 2 · bar chart: columns built bottom-up
-    var G = Math.max(5, Math.min(12, Math.round(Math.sqrt(N / 8))));
-    var cols = [];
-    for (var gx = 0; gx < G; gx++) for (var gz = 0; gz < G; gz++) {
-      var w = .35 + .65 * Math.pow(.5 + .5 * Math.sin(gx * .9 + 1) * Math.cos(gz * .7 - .5), 1.5) + r() * .15;
-      cols.push({ x: gx, z: gz, w: w });
-    }
-    var K = 1, cap = function (K) { return cols.reduce(function (s, c) { return s + Math.ceil(c.w * K); }, 0); };
-    while (cap(K) < N) K += .25;
-    var placed = 0, sp = .56, half = (G - 1) * sp / 2, levels = Math.ceil(K);
-    o = order();
-    for (var lv = 0; lv < levels && placed < N; lv++) {
-      for (k = 0; k < cols.length && placed < N; k++) {
-        if (Math.ceil(cols[k].w * K) <= lv) continue;
-        put(2, o[placed], cols[k].x * sp - half, -2.4 + lv * sp, cols[k].z * sp - half, .48, lv / levels);
-        placed++;
+    // Each section's cubes assemble into a voxel icon for that section.
+    // ICONS (above) draw on a small 2D canvas; voxelize() samples it into
+    // a grid sized to the cube budget, and leftover cubes drift around it.
+    ICONS.forEach(function (icon, stage) {
+      var cells = voxelize(icon.draw, N), o = order(), half = cells.layers > 1 ? .5 : 0;
+      for (var i = 0; i < N; i++) {
+        if (i < cells.pts.length) {
+          var c = cells.pts[i];
+          var stag = icon.sweep === 'x' ? (c.x / cells.w + .5) : (.5 - c.y / cells.h);
+          put(stage, o[i], c.x, c.y, (c.l - half) * cells.sp, cells.sp * .86, stag);
+        } else {                                   // spare cubes: a loose halo of dust
+          var th = r() * Math.PI * 2, rr = Math.max(cells.w, cells.h) * (.62 + r() * .35), u = r() * 2 - 1;
+          put(stage, o[i], Math.cos(th) * rr, Math.sin(th) * rr * .7, u * 2.2 - 1.5, .08 + .1 * r(), r());
+        }
       }
-    }
-
-    // 3 · orbit rings around a core
-    o = order();
-    var rings = [{ r: 3.0, a: .5, b: .2 }, { r: 4.6, a: -.35, b: 1.1 }, { r: 6.2, a: .15, b: -.7 }];
-    for (i = 0; i < N; i++) {
-      var th3 = r() * Math.PI * 2;
-      if (i < N * .12) {
-        var cr = 1.1 * Math.cbrt(r()), cu = r() * 2 - 1, cq = Math.sqrt(1 - cu * cu);
-        put(3, o[i], Math.cos(th3) * cq * cr, cu * cr, Math.sin(th3) * cq * cr, .14 + .2 * r(), 0);
-        continue;
-      }
-      var R = rings[i % 3], jr = R.r + (r() - .5) * .5;
-      var px = Math.cos(th3) * jr, py = (r() - .5) * .3, pz = Math.sin(th3) * jr;
-      var y1 = py * Math.cos(R.a) - pz * Math.sin(R.a), z1 = py * Math.sin(R.a) + pz * Math.cos(R.a);
-      var x2 = px * Math.cos(R.b) - y1 * Math.sin(R.b), y2 = px * Math.sin(R.b) + y1 * Math.cos(R.b);
-      put(3, o[i], x2, y2, z1, .1 + .18 * r(), th3 / (Math.PI * 2));
-    }
-
-    // 4 · rolling ledger sheet, ripples out from the centre
-    o = order();
-    var S = Math.ceil(Math.sqrt(N)), sp4 = .62, h4 = (S - 1) * sp4 / 2;
-    for (i = 0; i < N; i++) {
-      var ix = i % S, iz = Math.floor(i / S);
-      var x4 = ix * sp4 - h4, z4 = iz * sp4 - h4;
-      var d4 = Math.sqrt(x4 * x4 + z4 * z4) / (h4 * 1.42);
-      put(4, o[i], x4, Math.sin(x4 * .55) * Math.cos(z4 * .45) * 1.1 - .8, z4, .34, d4);
-    }
-
-    // 5 · one solid cube; leftovers orbit it
-    o = order();
-    var kk = Math.floor(Math.cbrt(N)), sp5 = .54, h5 = (kk - 1) * sp5 / 2, solid = kk * kk * kk;
-    for (i = 0; i < N; i++) {
-      if (i < solid) {
-        var a5 = i % kk, b5 = Math.floor(i / kk) % kk, c5 = Math.floor(i / (kk * kk));
-        put(5, o[i], a5 * sp5 - h5, b5 * sp5 - h5, c5 * sp5 - h5, .5, c5 / kk);
-      } else {
-        var th5 = r() * Math.PI * 2, r5 = h5 * 1.9 + 1 + r() * .6;
-        put(5, o[i], Math.cos(th5) * r5, (r() - .5) * .4, Math.sin(th5) * r5, .1 + .08 * r(), .5 + r() * .5);
-      }
-    }
+    });
 
     gl.bindTexture(gl.TEXTURE_2D, tex);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, N, 6, 0, gl.RGBA, gl.FLOAT, data);
@@ -311,13 +328,14 @@
   }
 
   /* camera per shape: [eye, target]; "narrow" = phones, centred and pulled back */
+  // near-frontal so each icon reads; the target shifts the icon left/right of the content
   var CAM = [
-    [[0, .5, 16],   [-3.2, 0, 0]],
-    [[-5, 3.5, 14], [0, 0, 0]],
-    [[12, 10, 18],  [-1.5, 0, 0]],
-    [[0, -2.5, 13], [2.6, 0, 0]],
-    [[0, 8.5, 11],  [0, -1, -1]],
-    [[5, 3, 10.5],  [-2.4, 0, 0]]
+    [[-1.4, .8, 15], [-3.0, 0, 0]],
+    [[4.4, .6, 15],  [3.2, 0, 0]],
+    [[-4.4, .9, 15], [-3.2, 0, 0]],
+    [[4.4, .4, 15],  [3.2, 0, 0]],
+    [[-4.4, .8, 15], [-3.2, 0, 0]],
+    [[-1.6, .6, 14], [-2.6, 0, 0]]
   ];
   function camAt(s, narrow) {
     var a = Math.min(5, Math.floor(s)), b = Math.min(5, a + 1), f = s - a;
@@ -327,12 +345,26 @@
       e[j] = CAM[a][0][j] + (CAM[b][0][j] - CAM[a][0][j]) * f;
       t[j] = CAM[a][1][j] + (CAM[b][1][j] - CAM[a][1][j]) * f;
     }
-    if (narrow) {
-      t[0] = 0; e[0] *= .5; e[2] += 7; e[1] += 1;
-      var lift = 2.6 * (1 - Math.min(1, s));   // phone hero: keep the cloud up behind the photo, off the headline
-      t[1] -= lift; e[1] -= lift;
+    if (narrow) {                                // phones: centred and pulled back, except the
+      var m = Math.min(1, s);                    // hero, which fitHero already lines up with the photo
+      t[0] *= 1 - m; e[0] *= 1 - m * .5; e[2] += 7 * m; e[1] += m;
     }
     return [e, t];
+  }
+
+  // Hero camera: put the "< >" brackets either side of the photo ring, at
+  // any screen size. Inner gap of the brackets ≈ 4.5 world units.
+  var ring = document.querySelector('.hero .ring');
+  function fitHero() {
+    if (!ring || !ring.offsetWidth) return;
+    var vw = window.innerWidth, vh = window.innerHeight, D = ring.offsetWidth;
+    // the ring spins, but its bounding box stays centred on it
+    var b = ring.getBoundingClientRect(), cx = b.left + b.width / 2, cy = b.top + b.height / 2 + window.pageYOffset;
+    // brackets hug the photo inside the ring; on small screens they also must fit the width
+    var k = Math.min(D * .86 / 4.32, (vw - cx - 10) / 4.2, (cx - 10) / 4.2);   // px per world unit
+    var d = vh / (2 * Math.tan((vw < 820 ? .95 : .8) / 2) * k);
+    var tx = (vw / 2 - cx) / k, ty = (cy - vh / 2) / k;
+    CAM[0] = [[tx, ty, d], [tx, ty, 0]];
   }
 
   /* ── scroll → stage ──────────────────────────────────── */
@@ -342,6 +374,7 @@
   function measure() {
     var vh = window.innerHeight, max = Math.max(1, root.scrollHeight - vh);
     var prev = 0;
+    fitHero();
     anchors = secs.map(function (el, k) {
       var a = k === 0 || !el ? prev : Math.min(max, Math.max(prev + 1, absTop(el) - vh * .55));
       prev = a; return a;
@@ -382,6 +415,7 @@
   window.addEventListener('scroll', function () { lastInput = performance.now(); }, { passive: true });
 
   /* ── loop ────────────────────────────────────────────── */
+  measure();   // real anchors first, so a reload mid-page starts on the right shape
   var shown = stageFor(window.pageYOffset), t0 = performance.now(), last = t0, lastDraw = 0;
   var probe = { start: t0 + 1500, frames: 0, sum: 0 };
 
@@ -393,7 +427,8 @@
 
   function loop(now) {
     raf = requestAnimationFrame(loop);
-    var dt = Math.min(.1, (now - last) / 1000); last = now;
+    // rAF's timestamp can be a little older than t0 on the first frame; a negative dt would overshoot
+    var dt = Math.max(0, Math.min(.1, (now - last) / 1000)); last = now;
 
     var target = stageFor(window.pageYOffset);
     var moving = Math.abs(target - shown) > .001 || now - lastInput < 600;
@@ -422,7 +457,7 @@
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.uniformMatrix4fv(U.uView, false, lookAt(c[0], c[1]));
-    gl.uniformMatrix4fv(U.uModel, false, rotYX(time * .05 + shown * .55, Math.sin(time * .2) * .05));
+    gl.uniformMatrix4fv(U.uModel, false, rotYX(Math.sin(time * .3) * .14, Math.sin(time * .2) * .04));
     gl.uniform1f(U.uStage, shown);
     gl.uniform1f(U.uTime, time);
     var dist = Math.hypot(c[0][0] - c[1][0], c[0][1] - c[1][1], c[0][2] - c[1][2]);
@@ -461,5 +496,5 @@
     e.preventDefault(); cancelAnimationFrame(raf); cv.style.display = 'none';
   });
 
-  window.__gl3d = { tier: function () { return tier; }, n: function () { return N; } };   // for debugging
+  window.__gl3d = { tier: function () { return tier; }, n: function () { return N; }, stage: function () { return shown; } };   // for debugging
 })();
