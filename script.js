@@ -252,10 +252,10 @@
 
   var LOOP = 13;          // seconds per cycle
   var WORD = 'derick';    // written vertically in the final square
-  // greens only, to match the black-and-green theme (names kept from the old palette)
+  // ambers only, to match the charcoal-and-amber theme (names kept from the old palette)
   var RGB = {
-    teal: '34,229,122', orange: '124,255,178', yellow: '190,242,100', green: '19,138,76',
-    blue: '52,211,153', red: '34,229,122', ink: '233,245,236', accent: '34,229,122'
+    teal: '242,177,60', orange: '255,210,122', yellow: '255,196,92', green: '185,128,42',
+    blue: '230,160,70', red: '242,177,60', ink: '244,239,232', accent: '242,177,60'
   };
 
   var W = 0, H = 0, U = 0, SX = 0;
@@ -491,14 +491,14 @@
     rrect(cx - s / 2 - 6, cy - s / 2 + 14, s + 12, s + 8, s * .1); ctx.fill();
     rrect(cx - s / 2 - 2, cy - s / 2 + 8, s + 4, s + 2, s * .09); ctx.fill();
     rrect(cx - s / 2, cy - s / 2, s, s, s * .08);
-    ctx.fillStyle = '#16241B'; ctx.fill();
-    ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(34,229,122,.6)'; ctx.stroke();
+    ctx.fillStyle = '#2A2218'; ctx.fill();
+    ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(242,177,60,.6)'; ctx.stroke();
 
     var tA = seg(t, 10.3, 10.9);
     if (tA) {
       ctx.globalAlpha = fade * tA;
       ctx.translate(cx, cy); ctx.rotate(-Math.PI / 2);
-      ctx.fillStyle = '#22E57A';
+      ctx.fillStyle = '#F2B13C';
       ctx.font = '600 ' + Math.round(S * .2) + 'px Poppins, sans-serif';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText(WORD, 0, (1 - tA) * 8);
