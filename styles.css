@@ -331,6 +331,9 @@ main { overflow-x: clip; }
 .proj__flag::before { background: var(--accent); }
 
 .stack { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 8px; }
+.proj__links { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13.5px; font-weight: 600; }
+.proj__links a { color: var(--accent); text-decoration: none; }
+.proj__links a:hover, .proj__links a:focus-visible { text-decoration: underline; }
 .stack li {
   font-size: 12.5px; font-weight: 500; color: var(--ink);
   background: var(--soft); border-radius: 8px; padding: 5px 12px;
