@@ -368,26 +368,50 @@
   }
 
   /* ── scroll → stage ──────────────────────────────────── */
+  // Each shape holds while its section fills the screen, and morphs only
+  // while the border between two sections crosses the middle of the screen.
   var secs = ['.hero', '#work', '#systems', '#skills', '#record', '#contact'].map(function (s) { return document.querySelector(s); });
-  var anchors = [0, 1, 2, 3, 4, 5];
+  var bounds = [1, 2, 3, 4, 5], band = 1;
   function absTop(el) { var t = 0; for (; el; el = el.offsetParent) t += el.offsetTop; return t; }
+
+  // Sections 1–5: park the icon in the empty margin beside the content
+  // when there's room for it; otherwise it sits behind the content.
+  var SIDE = [0, -1, 1, -1, 1, 1];                  // -1 = left margin, 1 = right
+  function fitSide(k, vw, vh) {
+    var el = secs[k];
+    if (!el) return;
+    var lo = vw, hi = 0;
+    Array.prototype.forEach.call(el.children, function (c) {
+      if (!c.offsetWidth || c.classList.contains('sr-only')) return;
+      var r = c.getBoundingClientRect();
+      lo = Math.min(lo, r.left); hi = Math.max(hi, r.right);
+    });
+    var gut = [lo, vw - hi], side = SIDE[k];
+    if (gut[side < 0 ? 0 : 1] < 230 && gut[side < 0 ? 1 : 0] >= 230) side = -side;
+    var g = gut[side < 0 ? 0 : 1], k0 = vh / (2 * Math.tan(.4) * 15), x, kp;
+    if (g >= 230) { kp = Math.min(k0 * 1.15, (g - 36) / 9.4); x = side < 0 ? g / 2 : vw - g / 2; }
+    else { kp = k0; x = vw / 2 + side * Math.min(vw * .22, 3.2 * k0); }
+    var d = vh / (2 * Math.tan(.4) * kp), tx = (vw / 2 - x) / kp;
+    CAM[k] = [[tx - side * 1.2, .6, d], [tx, 0, 0]];
+  }
+
   function measure() {
-    var vh = window.innerHeight, max = Math.max(1, root.scrollHeight - vh);
-    var prev = 0;
+    var vw = window.innerWidth, vh = window.innerHeight, max = Math.max(1, root.scrollHeight - vh);
     fitHero();
-    anchors = secs.map(function (el, k) {
-      var a = k === 0 || !el ? prev : Math.min(max, Math.max(prev + 1, absTop(el) - vh * .55));
-      prev = a; return a;
+    for (var k = 1; k < 6; k++) fitSide(k, vw, vh);
+    band = vh * .5;
+    var prev = -Infinity;
+    bounds = secs.slice(1).map(function (el) {
+      var b = el ? absTop(el) - vh / 2 : prev + band;
+      b = Math.min(b, max - band / 2);           // the last morph must finish before the page ends
+      b = Math.max(b, prev + band, band / 2);    // in order, and never before the hero starts
+      prev = b; return b;
     });
   }
   function stageFor(y) {
-    for (var k = 0; k < 5; k++) {
-      if (y < anchors[k + 1]) {
-        var p = (y - anchors[k]) / (anchors[k + 1] - anchors[k]);
-        return k + Math.max(0, Math.min(1, (p - .35) / .65));   // hold each shape a while, then morph
-      }
-    }
-    return 5;
+    var s = 0;
+    for (var k = 0; k < 5; k++) s += Math.max(0, Math.min(1, (y - bounds[k] + band / 2) / band));
+    return s;
   }
 
   /* ── sizing ──────────────────────────────────────────── */
@@ -496,5 +520,5 @@
     e.preventDefault(); cancelAnimationFrame(raf); cv.style.display = 'none';
   });
 
-  window.__gl3d = { tier: function () { return tier; }, n: function () { return N; }, stage: function () { return shown; } };   // for debugging
+  window.__gl3d = { tier: function () { return tier; }, n: function () { return N; }, stage: function () { return shown; }, target: function () { return stageFor(window.pageYOffset); } };   // for debugging
 })();
