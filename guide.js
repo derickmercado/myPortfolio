@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════
    Tour guide — an original inline-SVG character (a developer in
-   a green hoodie, glasses and headphones) with a jetpack, who
+   an amber hoodie, glasses and headphones) with a jetpack, who
    flies visitors through the page and speaks each section's intro.
 
    • He flies in with a loop, then hovers above the first card of
@@ -39,8 +39,8 @@
   }
 
   /* ── the character (viewBox 0 4 120 146; he hovers; flames end near y=148) ── */
-  var SKIN = '#C98B5E', SKIN_D = '#A86F47', HAIR = '#141414', HOOD = '#138A4C', HOOD_D = '#0E6B3A',
-      NEON = '#22E57A', INK = '#0C0F0D', JEANS = '#1C2A22';
+  var SKIN = '#C98B5E', SKIN_D = '#A86F47', HAIR = '#141414', HOOD = '#D9962B', HOOD_D = '#A8701C',
+      NEON = '#F2B13C', INK = '#100E0C', JEANS = '#2A2622';
   var VB_TOP = 4, VB_H = 146;
   var SVG =
     '<svg class="guide__svg" viewBox="0 ' + VB_TOP + ' 120 ' + VB_H + '" focusable="false">' +
@@ -48,20 +48,20 @@
         // jetpack thrusters (behind the arms) and their flames
         '<g class="g-jet">' +
           '<path class="g-flame" d="M22.5 123Q21 133 28 148Q35 133 33.5 123Z" fill="' + NEON + '" opacity=".9"/>' +
-          '<path class="g-flame" d="M25.2 123Q24.5 129 28 137Q31.5 129 30.8 123Z" fill="#E4FFEF"/>' +
+          '<path class="g-flame" d="M25.2 123Q24.5 129 28 137Q31.5 129 30.8 123Z" fill="#FFF3D6"/>' +
           '<path class="g-flame g-flame--r" d="M86.5 123Q85 133 92 148Q99 133 97.5 123Z" fill="' + NEON + '" opacity=".9"/>' +
-          '<path class="g-flame g-flame--r" d="M89.2 123Q88.5 129 92 137Q95.5 129 94.8 123Z" fill="#E4FFEF"/>' +
-          '<rect x="21.5" y="94" width="13" height="28" rx="5" fill="#1B221E" stroke="' + NEON + '" stroke-width="1.5"/>' +
-          '<rect x="85.5" y="94" width="13" height="28" rx="5" fill="#1B221E" stroke="' + NEON + '" stroke-width="1.5"/>' +
+          '<path class="g-flame g-flame--r" d="M89.2 123Q88.5 129 92 137Q95.5 129 94.8 123Z" fill="#FFF3D6"/>' +
+          '<rect x="21.5" y="94" width="13" height="28" rx="5" fill="#24201B" stroke="' + NEON + '" stroke-width="1.5"/>' +
+          '<rect x="85.5" y="94" width="13" height="28" rx="5" fill="#24201B" stroke="' + NEON + '" stroke-width="1.5"/>' +
           '<rect x="23" y="120" width="10" height="5" rx="2" fill="' + INK + '"/>' +
           '<rect x="87" y="120" width="10" height="5" rx="2" fill="' + INK + '"/>' +
         '</g>' +
         // legs hang free while he hovers
         '<g class="g-shin g-shin--l"><rect x="44.5" y="113" width="11" height="22" rx="5" fill="' + JEANS + '"/>' +
-          '<path d="M41 133.5h16a3 3 0 0 1 3 3v3.5H42a4 4 0 0 1-1-6.5z" fill="#E9F5EC"/>' +
+          '<path d="M41 133.5h16a3 3 0 0 1 3 3v3.5H42a4 4 0 0 1-1-6.5z" fill="#F4EFE8"/>' +
           '<rect x="41" y="138.4" width="19" height="2.4" rx="1.2" fill="' + NEON + '"/></g>' +
         '<g class="g-shin g-shin--r"><rect x="64.5" y="113" width="11" height="22" rx="5" fill="' + JEANS + '"/>' +
-          '<path d="M60 136.5a3 3 0 0 1 3-3h16a4 4 0 0 1 1 6.5H60z" fill="#E9F5EC"/>' +
+          '<path d="M60 136.5a3 3 0 0 1 3-3h16a4 4 0 0 1 1 6.5H60z" fill="#F4EFE8"/>' +
           '<rect x="60" y="138.4" width="19" height="2.4" rx="1.2" fill="' + NEON + '"/></g>' +
         // back arm
         '<g class="g-arm g-arm--l"><rect x="27" y="77" width="13" height="37" rx="6.5" fill="' + HOOD_D + '"/>' +

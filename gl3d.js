@@ -98,9 +98,9 @@
     '  float d = max(dot(n, normalize(vec3(0.35, 0.8, 0.55))), 0.0);',   // key light, top-right-front
     '  float h = 0.5 + 0.5 * n.y;',
     '  float rim = pow(1.0 - abs(n.z), 2.2);',                         // faces turned away from camera
-    '  float glow = smoothstep(0.55, 0.9, max(vCol.g - vCol.r, 0.0));', // neon cubes self-light a little
-    '  vec3 c = vCol * (0.28 + 0.72 * d) + vec3(0.03, 0.06, 0.04) * h;',
-    '  c += vec3(0.13, 0.9, 0.48) * rim * 0.32;',                        // subtle green rim on the dark page
+    '  float glow = smoothstep(0.55, 0.9, max(vCol.r - vCol.b, 0.0));', // neon cubes self-light a little
+    '  vec3 c = vCol * (0.28 + 0.72 * d) + vec3(0.06, 0.05, 0.03) * h;',
+    '  c += vec3(0.95, 0.69, 0.24) * rim * 0.28;',                        // subtle amber rim on the dark page
     '  c += vCol * glow * 0.35;',
     '  float a = 1.0 - smoothstep(uFog.x, uFog.y, vDepth);',   // far cubes melt into the page
     '  o = vec4(c * a, a);',
@@ -164,10 +164,10 @@
 
   var tex = gl.createTexture();
 
-  /* ── palette (matches styles.css: accent #22E57A) ─────── */
+  /* ── palette (matches styles.css: accent #F2B13C) ─────── */
   function hex(h) { return [parseInt(h.slice(1, 3), 16) / 255, parseInt(h.slice(3, 5), 16) / 255, parseInt(h.slice(5, 7), 16) / 255]; }
-  //            deep green  forest     graphite   near-black  neon       mint
-  var PAL = ['#138A4C', '#1D4D33', '#2C3530', '#101411', '#22E57A', '#7CFFB2'].map(hex);
+  //            deep amber  brown      graphite   near-black  amber      light amber
+  var PAL = ['#B9802A', '#5A4024', '#35302B', '#161310', '#F2B13C', '#FFD27A'].map(hex);
   var PAL_W = [.30, .26, .18, .14, .08, .04];
   gl.uniform3fv(U.uPal, new Float32Array([].concat.apply([], PAL)));
   // 0 = tumbling freely, 1 = locked to the grid
